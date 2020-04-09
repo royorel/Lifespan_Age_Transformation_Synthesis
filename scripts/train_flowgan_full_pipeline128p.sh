@@ -1,0 +1,11 @@
+CUDA_VISIBLE_DEVICES=2 python train.py --name full_pipeline_128p_6_flow_classes_tex_class1_tex_cyc40_tex_id4_no_facial_hair_flow_and_tex_n_global_use_encoding_net_use_parsings_tex_in_use_parsings_tex_out_nvidia_aligned_dataset_init_cycle_use_parsings_tex_in --display_port 8096 --dataroot ../face_parsing_nvidia_alignment_corrected/males --load_pretrained_flow checkpoints/flow_only_256p_minflow10_flow_cyc4_flowTV001_class_loss1_6_flow_classes_no_fake_classification_global_gen_no_facial_hair_10_iters_n_downsample_3_no_landmarks_no_encoding_nvidia_aligned_dataset_xy_rec_no_rec_net_7_classes_without_class_8 --which_epoch 4 --niter 10 --niter_decay 10 --flowgan_mode flow_and_texture --netG cond_global --n_downsample_global 3 --downsample_texture --lambda_cyc_tex 40.0 --lambda_id 4.0 --n_layers_D 3 --ngf 64 --no_flip --no_ganFeat_loss --no_vgg_loss --use_flow_classes --sort_order 0-2,3-6,7-10,11-15,16-20,21-30,31-40,41-50,51-70,71-120 --use_parsings --use_xy --no_rec_flow --num_flow_classes 7 --no_facial_hair --verbose --no_clothing_items --add_disc_cond_tex_class --use_cond_resnet_block --use_encoding_net --use_parsings_tex_in #--use_parsings_tex_out #--use_avg_features
+
+# flow_only_256p_minflow10_flow_cyc4_flowTV001_class_loss1_6_flow_classes_no_fake_classification_global_gen_no_facial_hair_20_iters_n_downsample_3 - new males flow model. use which epoch = 2
+# male flow working model: checkpoints/flow_only_256p_minflow10_flow_cyc4_flowTV0001_class_loss025_6_flow_classes_no_fake_classification_global_gen_no_facial_hair
+# female flow working model: checkpoints/flow_only_256p_minflow1_flow_cyc4_flowTV0001_class_loss025_6_flow_classes_no_fake_classification_global_gen_females
+
+# Nvidia aligned dataset
+# Add these flags:
+# --use_parsings --use_xy --no_rec_flow --num_flow_classes 7
+# male flow: flow_only_256p_minflow10_flow_cyc4_flowTV001_class_loss1_6_flow_classes_no_fake_classification_global_gen_no_facial_hair_10_iters_n_downsample_3_no_landmarks_no_encoding_nvidia_aligned_dataset_xy_rec_no_rec_net_7_classes_without_class_8 which_epoch = 3 or 4
+# female flow: flow_only_256p_minflow10_flow_cyc4_flowTV001_class_loss1_6_flow_classes_no_fake_classification_global_gen_no_facial_hair_10_iters_n_downsample_3_no_landmarks_no_encoding_no_rec_net_nvidia_aligned_dataset_females
