@@ -534,29 +534,16 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         if self.use_moving_avg:
             self.save_network(self.g_running, 'g_running', which_epoch, self.gpu_ids)
 
-
     def update_learning_rate(self):
-        if self.decay_method == 'linear':
-            lrd = self.opt.lr / self.opt.niter_decay
-            lr = self.old_lr - lrd
-            for param_group in self.optimizer_D.param_groups:
-                param_group['lr'] = lr
-            for param_group in self.optimizer_G.param_groups:
-                mult = param_group.get('mult', 1.0)
-                param_group['lr'] = lr * mult
-            if self.opt.verbose:
-                print('update learning rate: %f -> %f' % (self.old_lr, lr))
-            self.old_lr = lr
-        elif self.decay_method == 'step':
-            lr = self.old_lr * self.opt.decay_gamma
-            for param_group in self.optimizer_D.param_groups:
-                param_group['lr'] = lr
-            for param_group in self.optimizer_G.param_groups:
-                mult = param_group.get('mult', 1.0)
-                param_group['lr'] = lr * mult
-            if self.opt.verbose:
-                print('update learning rate: %f -> %f' % (self.old_lr, lr))
-            self.old_lr = lr
+        lr = self.old_lr * self.opt.decay_gamma
+        for param_group in self.optimizer_D.param_groups:
+            param_group['lr'] = lr
+        for param_group in self.optimizer_G.param_groups:
+            mult = param_group.get('mult', 1.0)
+            param_group['lr'] = lr * mult
+        if self.opt.verbose:
+            print('update learning rate: %f -> %f' % (self.old_lr, lr))
+        self.old_lr = lr
 
     def get_visuals(self):
         return_dicts = [OrderedDict() for i in range(self.numValid)]

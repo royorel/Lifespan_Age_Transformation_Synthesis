@@ -83,6 +83,11 @@ class MulticlassUnalignedDataset(BaseDataset):
         opt.dataset_size = self.__len__()
         self.transform = get_transform(opt)
 
+    def set_sample_mode(self, mode=False):
+        self.get_samples = mode
+        self.class_counter = 0
+        self.img_counter = 0
+
     def assign_tex_class(self, class_name):
         ages = [int(s) for s in re.split('-|_', class_name) if s.isdigit()]
         max_age = ages[-1]
@@ -116,11 +121,11 @@ class MulticlassUnalignedDataset(BaseDataset):
 
         return {'Imgs': img,
                 'Paths': [path],
-                'Classes': torch.zeros(1,dtype=torch.int),
+                'Classes': torch.zeros(1, dtype=torch.int),
                 'Valid': True}
 
     def __getitem__(self, index):
-        if self.opt.isTrain:# and not self.get_samples:
+        if self.opt.isTrain and not self.get_samples:
             condition = True
             self.class_A_idx = random.randint(0,self.numClasses - 1)
             self.class_A = self.active_classes_mapping[self.class_A_idx]
@@ -161,10 +166,12 @@ class MulticlassUnalignedDataset(BaseDataset):
         else:  # in test mode, load one image from each class
             i = self.class_counter % self.numClasses
             self.class_counter += 1
-            # if self.get_samples:
-            #     ind = random.randint(0, self.sizes[i] - 1)
-            # else:
-            ind = self.img_counter if self.img_counter < self.sizes[i] else -1
+
+            if self.get_samples:
+                ind = random.randint(0, self.sizes[i] - 1)
+            else:
+                ind = self.img_counter if self.img_counter < self.sizes[i] else -1
+
             if i == self.numClasses - 1:
                 self.img_counter += 1
 
