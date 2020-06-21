@@ -121,7 +121,6 @@ class MulticlassUnalignedDataset(BaseDataset):
 
     def __getitem__(self, index):
         if self.opt.isTrain:# and not self.get_samples:
-            if self.mode == 'uniform_tex':
             condition = True
             self.class_A_idx = random.randint(0,self.numClasses - 1)
             self.class_A = self.active_classes_mapping[self.class_A_idx]
