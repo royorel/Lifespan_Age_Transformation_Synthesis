@@ -1,1 +1,0 @@
-python test.py --dataroot ../Combined_Face_Dataset_with_masks_HQ200/males --name debug256p_with_masks_cyc40 --netG cond_local --sort_order 0-2,3-6,7-10,11-15,16-20,21-30,31-40,41-50,51-70,71-120 --use_parsings

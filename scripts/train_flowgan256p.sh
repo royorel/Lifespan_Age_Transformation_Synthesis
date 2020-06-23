@@ -1,1 +1,0 @@
-CUDA_VISIBLE_DEVICES=1 python train.py --display_port 8098 --name debug256p_with_masks_cyc40 --dataroot ../Combined_Face_Dataset_with_masks_HQ200/males --load_pretrain checkpoints/debug128p_with_masks_cyc40/ --lambda_cyc 40.0 --niter_fix_global 2 --no_flip --no_ganFeat_loss --no_vgg_loss --sort_order 0-2,3-6,7-10,11-15,16-20,21-30,31-40,41-50,51-70,71-120 --use_parsings
