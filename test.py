@@ -1,7 +1,6 @@
 ### Copyright (C) 2017 NVIDIA Corporation. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import os
-import csv
 from collections import OrderedDict
 from options.test_options import TestOptions
 from data.data_loader import CreateDataLoader
@@ -11,7 +10,6 @@ from util.visualizer import Visualizer
 from util import html
 import torch
 from pdb import set_trace as st
-# from run_engine import run_trt_engine, run_onnx
 
 
 def test(opt):
@@ -61,17 +59,7 @@ def test(opt):
                 out_path = os.path.join(output_dir, os.path.basename(image_path))
                 visualizer.save_images_deploy(visuals, out_path)
     else:
-        # if opt.verbose:
-        #     print(model)
-        # create webpage
         webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.which_epoch))
-
-        # create csv results map file
-        csv_filename = os.path.join(web_dir,'results.csv')
-        result_classes = ['Result Class {}'.format(i) for i in range(opt.numClasses)]
-        with open(csv_filename, 'w') as f:
-            writer = csv.writer(f)
-            writer.writerow(['Original Image', 'Original Class'] + result_classes)
 
         # test
         for i, data in enumerate(dataset):
@@ -93,17 +81,6 @@ def test(opt):
             visualizer.save_images(webpage, visuals, img_path)
 
             webpage.save() # it was put inside the loop to be able to see partial results
-
-            # write csv file to map to the final results
-            with open(csv_filename, 'a') as f:
-                basenames = [os.path.basename(curr_path)[:-4] for curr_path in img_path]
-                writer = csv.writer(f)
-                for ind, curr_sample in enumerate(basenames):
-                    curr_keys = visuals[ind].keys()
-                    curr_keys = list(curr_keys)[:opt.numClasses+1]
-                    curr_locations = [curr_sample + '_' + key + '.png' for key in curr_keys]
-                    row = [curr_locations[0], ind] + curr_locations[1:]
-                    writer.writerow(row)
 
 
 if __name__ == "__main__":

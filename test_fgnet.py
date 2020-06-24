@@ -19,29 +19,12 @@ def get_curr_id(paths):
 
     curr_id = basename[:age_token]
 
-    # last_slash = paths[0].rfind('/')
-    # age_token = paths[0].rfind('A')
-    # if age_token == -1:
-    #     age_token = paths[0].rfind('a')
-    #
-    # curr_id = paths[0][last_slash+1:age_token]
-
     return 'Ground Truth for ID ' + curr_id
-
-def mask_gt(data):
-    img = data[:, :3, :, :]
-    parsings = data[:, 3:, :, :]
-    labels_to_mask = [0,14,15,16,18]
-    for idx in labels_to_mask:
-        img[parsings == idx] = 0
-
-    return img
 
 def get_gt_visuals(real_imgs, paths):
     gt_dict = OrderedDict()
-    masked_real_imgs = mask_gt(real_imgs)
     for i in range(len(paths)):
-        curr_gt = util.tensor2im(masked_real_imgs[i, :3, :, :])
+        curr_gt = util.tensor2im(real_imgs[i, :3, :, :])
 
         age_token = paths[i].rfind('A')
         if age_token == -1:
@@ -83,13 +66,6 @@ def test_fgnet(opt):
     web_dir = web_dir + '_' + str(counter)
     webpage = html.HTML(web_dir, 'FGNET Evaluation - {}s'.format(gender))
 
-    # create csv results map file
-    csv_filename = os.path.join(web_dir,'results.csv')
-    result_classes = ['Result Class {}'.format(i) for i in range(opt.numClasses)]
-    with open(csv_filename, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Original Image', 'Original Class'] + result_classes + ['Ground Truth Images'])
-
     # evaluate
     for i, data in enumerate(dataset):
         if i >= opt.how_many:
@@ -103,18 +79,6 @@ def test_fgnet(opt):
 
         gt_visuals = get_gt_visuals(data['Imgs'].squeeze(0), img_path)
         visualizer.save_image_gt_pairs(webpage, visuals, img_path, gt_visuals, gt_path, data['Classes'])
-
-        # write csv file to map to the final results
-        with open(csv_filename, 'a') as f:
-            basenames = [os.path.basename(curr_path)[:-4] for curr_path in img_path]
-            gt_filenames = [os.path.basename(curr_path) for curr_path in img_path]
-            writer = csv.writer(f)
-            for ind, curr_sample in enumerate(basenames):
-                curr_keys = visuals[ind].keys()
-                curr_keys = list(curr_keys)[:opt.numClasses+1]
-                curr_locations = [curr_sample + '_' + key + '.png' for key in curr_keys]
-                row = [curr_locations[0], ind] + curr_locations[1:] + gt_filenames
-                writer.writerow(row)
 
         webpage.save()
 

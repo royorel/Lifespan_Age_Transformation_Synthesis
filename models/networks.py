@@ -46,19 +46,18 @@ def get_norm_layer(norm_type='instance'):
     return norm_layer
 
 def define_G(input_nc, output_nc, ngf, n_downsample_global=2,
-             norm='instance', gpu_ids=[], padding_type='reflect',
+             id_enc_norm='pixel', gpu_ids=[], padding_type='reflect',
              style_dim=50, init_type='gaussian',
              conv_weight_norm=False, decoder_norm='pixel', activation='lrelu',
              adaptive_blocks=4, normalize_mlp=False, modulated_conv=False):
 
-    norm_layer = get_norm_layer(norm_type=norm)
+    id_enc_norm = get_norm_layer(norm_type=id_enc_norm)
 
-    netG = AdaINGenerator(input_nc, output_nc, ngf, n_downsampling=n_downsample_global,
-                          norm_layer=norm_layer, padding_type=padding_type, style_dim=style_dim,
-                          conv_weight_norm=conv_weight_norm, decoder_norm=decoder_norm,
-                          activation=activation, use_tanh=use_tanh,
-                          adaptive_blocks=adaptive_blocks, normalize_mlp=normalize_mlp,
-                          modulated_conv=modulated_conv)
+    netG = Generator(input_nc, output_nc, ngf, n_downsampling=n_downsample_global,
+                     id_enc_norm=id_enc_norm, padding_type=padding_type, style_dim=style_dim,
+                     conv_weight_norm=conv_weight_norm, decoder_norm=decoder_norm,
+                     actvn=activation, adaptive_blocks=adaptive_blocks,
+                     normalize_mlp=normalize_mlp, modulated_conv=modulated_conv)
 
     print(netG)
     if len(gpu_ids) > 0:
@@ -69,10 +68,11 @@ def define_G(input_nc, output_nc, ngf, n_downsample_global=2,
 
     return netG
 
-def define_D(input_nc, ndf, numClasses=2, gpu_ids=[],
-             init_type='gaussian', activation='lrelu'):
+def define_D(input_nc, ndf, n_layers=6, numClasses=2, gpu_ids=[],
+             init_type='gaussian'):
 
-    netD = StyleGANDiscriminator(input_nc, ndf=ndf, n_layers=6, numClasses=numClasses)
+    netD = StyleGANDiscriminator(input_nc, ndf=ndf, n_layers=n_layers,
+                                 numClasses=numClasses)
 
     print(netD)
     if len(gpu_ids) > 0:
@@ -106,7 +106,7 @@ class _CustomDataParallel(nn.DataParallel):
         except AttributeError:
             print(name)
             return getattr(self.module, name)
-            
+
 
 ##############################################################################
 # Losses
@@ -487,7 +487,8 @@ class StyledConvBlock(nn.Module):
 
 class IdentityEncoder(nn.Module):
     def __init__(self, input_nc, ngf=64, n_downsampling=3, n_blocks=7,
-                 norm_layer=nn.BatchNorm2d, padding_type='reflect', conv_weight_norm=False, actvn='relu'):
+                 norm_layer=PixelNorm, padding_type='reflect',
+                 conv_weight_norm=False, actvn='relu'):
         assert(n_blocks >= 0)
         super(IdentityEncoder, self).__init__()
 
@@ -562,21 +563,15 @@ class AgeEncoder(nn.Module):
         latent = features.mean(dim=3).mean(dim=2)
         return latent
 
-class StyleGANDecoder(nn.Module):
+class StyledDecoder(nn.Module):
     def __init__(self, output_nc, ngf=64, style_dim=50, latent_dim=256, n_downsampling=2,
                  padding_type='reflect', actvn='lrelu', use_tanh=True, use_pixel_norm=False,
                  normalize_mlp=False, modulated_conv=False):
-        super(StyleGANDecoder, self).__init__()
-        self.modulated_conv = modulated_conv
+        super(StyledDecoder, self).__init__()
         if padding_type == 'reflect':
             padding_layer = nn.ReflectionPad2d
         else:
             padding_layer = nn.ZeroPad2d
-
-        if conv_weight_norm:
-            conv2d = EqualConv2d
-        else:
-            conv2d = nn.Conv2d
 
         mult = 2**n_downsampling
         last_upconv_out_layers = ngf * mult // 4
@@ -615,34 +610,34 @@ class StyleGANDecoder(nn.Module):
                                                    use_pixel_norm=use_pixel_norm,
                                                    normalize_affine_output=normalize_mlp,
                                                    modulated_conv=modulated_conv)
-        padding_sz = conv_img_kernel_size // 2
+
         self.conv_img = nn.Sequential(EqualConv2d(last_upconv_out_layers, output_nc, 1), nn.Tanh())
         self.mlp = MLP(style_dim, latent_dim, 256, 8, weight_norm=True, activation=actvn, normalize_mlp=normalize_mlp)
 
-    def forward(self, input_features, target_style=None, traverse=False, deploy=False, interp_step=0.5, xy=None, flow_seg=None):
-        if target_style is not None:
+    def forward(self, id_features, target_age=None, traverse=False, deploy=False, interp_step=0.5, xy=None, flow_seg=None):
+        if target_age is not None:
             if traverse:
                 alphas = torch.arange(1,0,step=-interp_step).view(-1,1).cuda()
                 interps = len(alphas)
-                orig_class_num = target_style.shape[0]
+                orig_class_num = target_age.shape[0]
                 output_classes = interps * (orig_class_num - 1) + 1
-                temp_latent = self.mlp(target_style)
+                temp_latent = self.mlp(target_age)
                 latent = temp_latent.new_zeros((output_classes, temp_latent.shape[1]))
             else:
-                latent = self.mlp(target_style)
+                latent = self.mlp(target_age)
         else:
             latent = None
 
         if traverse:
-            input_features = input_features.repeat(output_classes,1,1,1)
+            id_features = id_features.repeat(output_classes,1,1,1)
             for i in range(orig_class_num-1):
                 latent[interps*i:interps*(i+1), :] = alphas * temp_latent[i,:] + (1 - alphas) * temp_latent[i+1,:]
             latent[-1,:] = temp_latent[-1,:]
         elif deploy:
-            output_classes = target_style.shape[0]
-            input_features = input_features.repeat(output_classes,1,1,1)
+            output_classes = target_age.shape[0]
+            id_features = id_features.repeat(output_classes,1,1,1)
 
-        out = self.StyledConvBlock_0(input_features, latent)
+        out = self.StyledConvBlock_0(id_features, latent)
         out = self.StyledConvBlock_1(out, latent)
         out = self.StyledConvBlock_2(out, latent)
         out = self.StyledConvBlock_3(out, latent)
@@ -652,27 +647,26 @@ class StyleGANDecoder(nn.Module):
 
         return out
 
-class AdaINGenerator(nn.Module):
+class Generator(nn.Module):
     def __init__(self, input_nc, output_nc, ngf=64, style_dim=50, n_downsampling=2,
                  n_blocks=4, adaptive_blocks=4, norm_layer=nn.BatchNorm2d,
                  padding_type='reflect', conv_weight_norm=False,
-                 decoder_norm='pixel', normalize_mlp=False,
+                 decoder_norm='pixel', actvn='lrelu', normalize_mlp=False,
                  modulated_conv=False):
-        super(AdaINGenerator, self).__init__()
+        super(Generator, self).__init__()
         self.id_encoder = IdentityEncoder(input_nc, ngf, n_downsampling, n_blocks, norm_layer,
-                                              padding_type, conv_weight_norm=conv_weight_norm,
-                                              actvn='relu') # replacing relu with leaky relu here causes nans and the entire training to collapse immediately
+                                          padding_type, conv_weight_norm=conv_weight_norm,
+                                          actvn='relu') # replacing relu with leaky relu here causes nans and the entire training to collapse immediately
         self.age_encoder = AgeEncoder(input_nc, ngf=ngf, n_downsampling=4, style_dim=style_dim,
-                                      padding_type=padding_type, actvn='lrelu',
+                                      padding_type=padding_type, actvn=actvn,
                                       conv_weight_norm=conv_weight_norm)
 
         use_pixel_norm = decoder_norm == 'pixel'
-        self.decoder = StyleGANDecoder(output_nc, ngf=ngf, style_dim=style_dim,
-                                       n_downsampling=n_downsampling,
-                                       actvn='lrelu', adaptive_blocks=adaptive_blocks,
-                                       use_pixel_norm=use_pixel_norm,
-                                       normalize_mlp=normalize_mlp,
-                                       modulated_conv=modulated_conv)
+        self.decoder = StyledDecoder(output_nc, ngf=ngf, style_dim=style_dim,
+                                     n_downsampling=n_downsampling, actvn=actvn,
+                                     use_pixel_norm=use_pixel_norm,
+                                     normalize_mlp=normalize_mlp,
+                                     modulated_conv=modulated_conv)
 
     def encode(self, input):
         if torch.is_tensor(input):
@@ -684,7 +678,7 @@ class AdaINGenerator(nn.Module):
 
     def decode(self, id_features, target_age_features, traverse=False, deploy=False, interp_step=0.5):
         if torch.is_tensor(id_features):
-            return self.decoder(id_features, None, target_age_features, traverse=traverse, deploy=deploy, interp_step=interp_step)
+            return self.decoder(id_features, target_age_features, traverse=traverse, deploy=deploy, interp_step=interp_step)
         else:
             return None, None, None, None
 
@@ -720,13 +714,13 @@ class AdaINGenerator(nn.Module):
 
 # Define a resnet block
 class ResnetBlock(nn.Module):
-    def __init__(self, dim, padding_type, norm_layer, activation=nn.ReLU(True), use_dropout=False,
+    def __init__(self, dim, padding_type, norm_layer, activation=nn.ReLU(True),
                  conv_weight_norm=False, use_pixel_norm=False):
         super(ResnetBlock, self).__init__()
         self.conv_block = self.build_conv_block(dim, padding_type, norm_layer, activation,
-                                                use_dropout, conv_weight_norm, use_pixel_norm)
+                                                conv_weight_norm, use_pixel_norm)
 
-    def build_conv_block(self, dim, padding_type, norm_layer, activation, use_dropout, conv_weight_norm, use_pixel_norm):
+    def build_conv_block(self, dim, padding_type, norm_layer, activation, conv_weight_norm, use_pixel_norm):
         conv_block = []
         p = 0
         if padding_type == 'reflect':
@@ -750,9 +744,6 @@ class ResnetBlock(nn.Module):
         conv_block += [conv2d(dim, dim, kernel_size=3, padding=p),
                        norm_layer(dim),
                        activation]
-
-        if use_dropout:
-            conv_block += [nn.Dropout(0.5)]
 
         p = 0
         if padding_type == 'reflect':
@@ -792,7 +783,7 @@ class StyleGANDiscriminator(nn.Module):
         for n in range(n_layers):
             nf_prev = nf
             nf = min(nf * 2, 512)
-            sequence += [StyledConvBlock(nf_prev, nf, downsample=True, norm='none', actvn=actvn)]
+            sequence += [StyledConvBlock(nf_prev, nf, downsample=True, actvn=activation)]
 
         self.model = nn.Sequential(*sequence)
 

@@ -6,7 +6,7 @@ import inspect, re
 import os
 import collections
 import math
-from skimage import color
+# from skimage import color
 from pdb import set_trace as st
 
 # Converts a Tensor into a Numpy array

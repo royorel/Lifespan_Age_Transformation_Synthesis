@@ -50,16 +50,14 @@ class MulticlassUnalignedDataset(BaseDataset):
                 self.name_mapping[currClass] = curr_class_num
 
         self.active_classes_mapping = {}
-        self.inv_active_classes_mapping = {}
 
         for i, name in enumerate(self.classNames):
             self.active_classes_mapping[i] = self.name_mapping[name]
-            self.inv_active_classes_mapping[self.name_mapping[name]] = i
 
         self.numClasses = len(self.classNames)
         opt.numClasses = self.numClasses
         opt.classNames = self.classNames
-        opt.active_classes_mapping = self.active_classes_mapping
+        # opt.active_classes_mapping = self.active_classes_mapping
 
         # set class counter for test mode
         if self.opt.isTrain is False:
@@ -75,7 +73,7 @@ class MulticlassUnalignedDataset(BaseDataset):
 
         for currClass in self.classNames:
             self.dirs += [os.path.join(opt.dataroot, opt.phase + currClass)]
-            imgs, parsings = list_folder_images(self.dirs[-1], self.opt, None)
+            imgs, parsings = list_folder_images(self.dirs[-1], self.opt)
             self.img_paths += [imgs]
             self.parsing_paths += [parsings]
             self.sizes += [len(self.img_paths[-1])]
