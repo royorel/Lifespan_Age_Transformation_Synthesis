@@ -126,7 +126,12 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
             else:
                 matrix_img = np.concatenate((matrix_img, curr_row_img), 0)
 
-        image_path = os.path.join(self.img_dir,'sample_batch_epoch_{}.png'.format(epoch))
+        if epoch != 'latest':
+            epoch_txt = 'epoch_' + str(epoch)
+        else:
+            epoch_txt = epochs
+
+        image_path = os.path.join(self.img_dir,'sample_batch_{}.png'.format(epoch_txt))
         util.save_image(matrix_img, image_path)
 
     def save_row_image(self, visuals, image_path, traverse=False):

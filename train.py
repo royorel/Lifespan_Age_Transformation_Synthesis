@@ -79,13 +79,11 @@ def train(opt):
             save_fake = (total_steps % opt.display_freq == display_delta) and (opt.display_id > 0)
 
             ############## Network Pass ########################
-            st()
             model.set_inputs(data)
             disc_losses = model.update_D()
             gen_losses, gen_in, gen_out, rec_out, cyc_out = model.update_G(infer=save_fake)
             loss_dict = dict(gen_losses, **disc_losses)
             ##################################################
-
 
             ############## Display results and errors ##########
             ### print out errors
@@ -138,10 +136,6 @@ def train(opt):
         iter_end_time = time.time()
         print('End of epoch %d / %d \t Time Taken: %d sec' %
               (epoch+1, opt.epochs, time.time() - epoch_start_time))
-
-        if opt.display_id == 0:
-            visuals = model.inference(sample_data)
-            visualizer.save_matrix_image(visuals, epoch+1)
 
         ### save model for this epoch
         if (epoch+1) % opt.save_epoch_freq == 0:

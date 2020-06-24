@@ -614,7 +614,7 @@ class StyledDecoder(nn.Module):
         self.conv_img = nn.Sequential(EqualConv2d(last_upconv_out_layers, output_nc, 1), nn.Tanh())
         self.mlp = MLP(style_dim, latent_dim, 256, 8, weight_norm=True, activation=actvn, normalize_mlp=normalize_mlp)
 
-    def forward(self, id_features, target_age=None, traverse=False, deploy=False, interp_step=0.5, xy=None, flow_seg=None):
+    def forward(self, id_features, target_age=None, traverse=False, deploy=False, interp_step=0.5):
         if target_age is not None:
             if traverse:
                 alphas = torch.arange(1,0,step=-interp_step).view(-1,1).cuda()
@@ -680,7 +680,7 @@ class Generator(nn.Module):
         if torch.is_tensor(id_features):
             return self.decoder(id_features, target_age_features, traverse=traverse, deploy=deploy, interp_step=interp_step)
         else:
-            return None, None, None, None
+            return None
 
     #parallel forward
     def forward(self, input, target_age_code, source_age_code, disc_pass=False):

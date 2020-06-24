@@ -226,7 +226,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
             self.reals = inputs
 
             if len(self.gpu_ids) > 0:
-                self.reals = real_A.cuda()
+                self.reals = self.reals.cuda()
 
 
     def get_conditions(self, mode='train'):
@@ -332,15 +332,15 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                     orig_id_features_out, _ = self.g_running.encode(self.reals)
                     #within domain decode
                     if self.opt.lambda_rec > 0:
-                        rec_images_out, _, _, _ = self.g_running.decode(orig_id_features_out, self.orig_conditions)
+                        rec_images_out = self.g_running.decode(orig_id_features_out, self.orig_conditions)
 
                     #cross domain decode
-                    gen_images_out, _, _, _ = self.g_running.decode(orig_id_features_out, self.gen_conditions)
+                    gen_images_out = self.g_running.decode(orig_id_features_out, self.gen_conditions)
                     #encode generated
                     fake_id_features_out, _ = self.g_running.encode(gen_images)
                     #decode generated
                     if self.opt.lambda_cyc > 0:
-                        cyc_images_out, _, _, _ = self.g_running.decode(fake_id_features_out, self.orig_conditions)
+                        cyc_images_out = self.g_running.decode(fake_id_features_out, self.orig_conditions)
             else:
                 gen_images_out = gen_images
                 if self.opt.lambda_rec > 0:
@@ -353,7 +353,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                      'loss_G_age_reconst': loss_G_age_reconst.mean()}
 
         return [loss_dict,
-                None if not infer else gen_in,
+                None if not infer else self.reals,
                 None if not infer else gen_images_out,
                 None if not infer else rec_images_out,
                 None if not infer else cyc_images_out]
@@ -404,8 +404,8 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
 
         self.numValid = self.valid.sum().item()
         sz = self.reals.size()
-        self.fake_B_tex = self.Tensor(self.numClasses, sz[0], sz[1], sz[2], sz[3])
-        self.rec_A_tex = self.Tensor(self.numClasses, sz[0], sz[1], sz[2], sz[3])
+        self.fake_B = self.Tensor(self.numClasses, sz[0], sz[1], sz[2], sz[3])
+        self.cyc_A = self.Tensor(self.numClasses, sz[0], sz[1], sz[2], sz[3])
 
         with torch.no_grad():
             if self.traverse or self.deploy:
@@ -418,14 +418,12 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
 
                 self.get_conditions(mode='test')
 
-                self.tex_in = self.reals
                 within_domain_idx = -1
-                self.fake_B_tex = self.netG.infer(self.tex_in, None, self.gen_conditions, within_domain_idx, traverse=self.traverse, deploy=self.deploy, interp_step=self.opt.interp_step)
+                self.fake_B = self.netG.infer(self.reals, None, self.gen_conditions, within_domain_idx, traverse=self.traverse, deploy=self.deploy, interp_step=self.opt.interp_step)
             else:
                 for i in range(self.numClasses):
                     self.class_B = self.Tensor(self.numValid).long().fill_(i)
                     self.get_conditions(mode='test')
-                    self.tex_in = self.reals
 
                     if self.use_orig_age_features_within_domain:
                         within_domain_idx = i
@@ -433,16 +431,16 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                         within_domain_idx = -1
 
                     if self.isTrain:
-                        self.fake_B_tex[i, :, :, :, :] = self.g_running.infer(tex_in, None, self.gen_conditions, within_domain_idx)
+                        self.fake_B[i, :, :, :, :] = self.g_running.infer(self.reals, self.gen_conditions, within_domain_idx)
                     else:
-                        self.fake_B_tex[i, :, :, :, :] = self.netG.infer(tex_in, None, self.gen_conditions, within_domain_idx)
+                        self.fake_B[i, :, :, :, :] = self.netG.infer(self.reals, self.gen_conditions, within_domain_idx)
 
-                    fake_B_tex_rec_input = self.fake_B_tex[i, :, :, :, :]
+                    cyc_input = self.fake_B[i, :, :, :, :]
 
                     if self.isTrain:
-                        self.rec_A_tex[i, :, :, :, :] = self.g_running.infer(fake_B_tex_rec_input, None, self.orig_conditions, within_domain_idx)
+                        self.cyc_A[i, :, :, :, :] = self.g_running.infer(cyc_input, self.orig_conditions, within_domain_idx)
                     else:
-                        self.rec_A_tex[i, :, :, :, :] = self.netG.infer(fake_B_tex_rec_input, None, self.orig_conditions, within_domain_idx)
+                        self.cyc_A[i, :, :, :, :] = self.netG.infer(cyc_input, self.orig_conditions, within_domain_idx)
 
             visuals = self.get_visuals()
 
@@ -471,11 +469,11 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
     def get_visuals(self):
         return_dicts = [OrderedDict() for i in range(self.numValid)]
 
-        real_A = util.tensor2im(self.tex_in.data)
-        fake_B_tex = util.tensor2im(self.fake_B_tex.data)
+        real_A = util.tensor2im(self.reals.data)
+        fake_B_tex = util.tensor2im(self.fake_B.data)
 
         if self.debug_mode:
-            rec_A_tex = util.tensor2im(self.rec_A_tex.data[:,:,:,:,:])
+            rec_A_tex = util.tensor2im(self.cyc_A.data[:,:,:,:,:])
 
         if self.numValid == 1:
             real_A = np.expand_dims(real_A, axis=0)
