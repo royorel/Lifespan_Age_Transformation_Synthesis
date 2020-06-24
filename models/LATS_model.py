@@ -178,7 +178,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
             params1[k].data.mul_(decay).add_(1 - decay, params2[k2].data)
 
 
-    def encode_input(self, data, mode='train'):
+    def set_inputs(self, data, mode='train'):
         # set input data to feed to the network
         if mode == 'train':
             real_A = data['A']
@@ -232,7 +232,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
     def get_conditions(self, mode='train'):
         # set conditional inputs to the network
         if mode == 'train':
-            nb = self.masked_reals.shape[0] // 2
+            nb = self.reals.shape[0] // 2
         elif self.traverse or self.deploy:
             if self.traverse and self.compare_to_trained_outputs:
                 nb = 2
@@ -241,11 +241,9 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         else:
             nb = self.numValid
 
-        is_adain_gen = True
-
         #tex condition mapping
-        condG_A_global = self.Tensor(nb, self.cond_length)
-        condG_B_global = self.Tensor(nb, self.cond_length)
+        condG_A_gen = self.Tensor(nb, self.cond_length)
+        condG_B_gen = self.Tensor(nb, self.cond_length)
         condG_A_orig = self.Tensor(nb, self.cond_length)
         condG_B_orig = self.Tensor(nb, self.cond_length)
 
@@ -255,11 +253,11 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
             noise_sigma = 0.2
 
         for i in range(nb):
-            condG_A_global[i, :] = (noise_sigma * torch.randn(1, self.cond_length)).cuda()
-            condG_A_global[i, self.class_B[i]*self.duplicate:(self.class_B[i] + 1)*self.duplicate] += 1
+            condG_A_gen[i, :] = (noise_sigma * torch.randn(1, self.cond_length)).cuda()
+            condG_A_gen[i, self.class_B[i]*self.duplicate:(self.class_B[i] + 1)*self.duplicate] += 1
             if not (self.traverse or self.deploy):
-                condG_B_global[i, :] = (noise_sigma * torch.randn(1, self.cond_length)).cuda()
-                condG_B_global[i, self.class_A[i]*self.duplicate:(self.class_A[i] + 1)*self.duplicate] += 1
+                condG_B_gen[i, :] = (noise_sigma * torch.randn(1, self.cond_length)).cuda()
+                condG_B_gen[i, self.class_A[i]*self.duplicate:(self.class_A[i] + 1)*self.duplicate] += 1
 
                 condG_A_orig[i, :] = (noise_sigma * torch.randn(1, self.cond_length)).cuda()
                 condG_A_orig[i, self.class_A[i]*self.duplicate:(self.class_A[i] + 1)*self.duplicate] += 1
@@ -268,55 +266,49 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                 condG_B_orig[i, self.class_B[i]*self.duplicate:(self.class_B[i] + 1)*self.duplicate] += 1
 
         if mode == 'train':
-            if is_adain_gen:
-                self.gen_conditions =  torch.cat((condG_A_global, condG_B_global), 0) #torch.cat((self.class_B, self.class_A), 0)
-                self.rec_conditions = torch.cat((condG_B_global, condG_A_global), 0)
-                self.orig_conditions = torch.cat((condG_A_orig, condG_B_orig),0)
+            self.gen_conditions =  torch.cat((condG_A_gen, condG_B_gen), 0) #torch.cat((self.class_B, self.class_A), 0)
+            # if the results are not good this might be the issue!!!! uncomment and update code respectively
+            # self.rec_conditions = torch.cat((condG_B_gen, condG_A_gen), 0)
+            self.orig_conditions = torch.cat((condG_A_orig, condG_B_orig),0)
         else:
-            self.gen_conditions = condG_A_global #self.class_B
+            self.gen_conditions = condG_A_gen #self.class_B
             if not (self.traverse or self.deploy):
-                self.rec_conditions = condG_B_global #self.class_A
+                # if the results are not good this might be the issue!!!! uncomment and update code respectively
+                # self.rec_conditions = condG_B_gen #self.class_A
                 self.orig_conditions = condG_A_orig
 
 
     def update_G(self, infer=False):
         # Generator optimization setp
         self.optimizer_G.zero_grad()
-
         self.get_conditions()
-        gen_in = self.reals
-
-        gen_embeddings = self.gen_conditions
-        rec_embeddings = self.rec_conditions
-        orig_embeddings = self.orig_conditions
 
         ############### multi GPU ###############
-        reconst_tex_images, generated_tex_images, cyc_tex_images, orig_id_features,
+        rec_images, gen_images, cyc_images, orig_id_features, \
         orig_age_features, fake_id_features, fake_age_features = \
-        self.netG(gen_in, rec_embeddings, gen_embeddings, orig_embeddings)
+        self.netG(self.reals, self.gen_conditions, self.orig_conditions)
 
         #discriminator pass
-        disc_in = generated_tex_images
-        disc_out = self.netD(disc_in)
+        disc_out = self.netD(gen_images)
 
         #self-reconstruction loss
         if self.opt.lambda_rec > 0:
-            loss_G_Rec = self.criterionRec(reconst_tex_images, gen_in) * self.opt.lambda_rec
+            loss_G_Rec = self.criterionRec(rec_images, self.reals) * self.opt.lambda_rec
         else:
             loss_G_Rec = torch.zeros(1).cuda()
 
         #cycle loss
         if self.opt.lambda_cyc > 0:
-            loss_G_Cycle = self.criterionCycle(cyc_tex_images, gen_in) * self.opt.lambda_cyc
+            loss_G_Cycle = self.criterionCycle(cyc_images, self.reals) * self.opt.lambda_cyc
         else:
             loss_G_Cycle = torch.zeros(1).cuda()
 
         # identity feature loss
         loss_G_identity_reconst = self.identity_reconst_criterion(fake_id_features, orig_id_features) * self.opt.lambda_id
         # age feature loss
-        loss_G_age_reconst = self.age_reconst_criterion(fake_age_features, gen_embeddings) * self.opt.lambda_age
+        loss_G_age_reconst = self.age_reconst_criterion(fake_age_features, self.gen_conditions) * self.opt.lambda_age
         # orig age feature loss
-        loss_G_age_reconst += self.age_reconst_criterion(orig_age_features, orig_embeddings) * self.opt.lambda_age
+        loss_G_age_reconst += self.age_reconst_criterion(orig_age_features, self.orig_conditions) * self.opt.lambda_age
 
         # adversarial loss
         target_classes = torch.cat((self.class_B,self.class_A),0)
@@ -337,27 +329,24 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         if infer:
             if self.use_moving_avg:
                 with torch.no_grad():
-                    orig_id_features_out, _ = self.g_running.encode(gen_in)
+                    orig_id_features_out, _ = self.g_running.encode(self.reals)
                     #within domain decode
                     if self.opt.lambda_rec > 0:
-                        if self.use_orig_age_features_within_domain:
-                            reconst_tex_images_out = self.g_running(gen_in, None)
-                        else:
-                            reconst_tex_images_out, _, _, _ = self.g_running.decode(orig_id_features_out, None, rec_embeddings)
+                        rec_images_out, _, _, _ = self.g_running.decode(orig_id_features_out, self.orig_conditions)
 
                     #cross domain decode
-                    generated_tex_images_out, _, _, _ = self.g_running.decode(orig_id_features_out, None, gen_embeddings)
+                    gen_images_out, _, _, _ = self.g_running.decode(orig_id_features_out, self.gen_conditions)
                     #encode generated
-                    fake_id_features_out, _ = self.g_running.encode(generated_tex_images, self.masks)
+                    fake_id_features_out, _ = self.g_running.encode(gen_images)
                     #decode generated
                     if self.opt.lambda_cyc > 0:
-                        cyc_tex_images_out, _, _, _ = self.g_running.decode(fake_id_features_out, None, rec_embeddings)
+                        cyc_images_out, _, _, _ = self.g_running.decode(fake_id_features_out, self.orig_conditions)
             else:
-                generated_tex_images_out = generated_tex_images
+                gen_images_out = gen_images
                 if self.opt.lambda_rec > 0:
-                    reconst_tex_images_out = reconst_tex_images
+                    rec_images_out = rec_images
                 if self.opt.lambda_cyc > 0:
-                    cyc_tex_images_out = cyc_tex_images
+                    cyc_images_out = cyc_images
 
         loss_dict = {'loss_G_GAN': loss_G_GAN.mean(), 'loss_G_Cycle': loss_G_Cycle.mean(),
                      'loss_G_Rec': loss_G_Rec.mean(), 'loss_G_identity_reconst': loss_G_identity_reconst.mean(),
@@ -365,26 +354,25 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
 
         return [loss_dict,
                 None if not infer else gen_in,
-                None if not infer else generated_tex_images_out,
-                None if not infer else reconst_tex_images_out,
-                None if not infer else cyc_tex_images_out]
+                None if not infer else gen_images_out,
+                None if not infer else rec_images_out,
+                None if not infer else cyc_images_out]
 
 
     def update_D(self):
         # Discriminator optimization setp
         self.optimizer_D.zero_grad()
         self.get_conditions()
-        gen_in = self.reals
 
         ############### multi GPU ###############
-        _, generated_tex_images, _, _, _, _, _ = self.netG(gen_in, None, self.gen_conditions, None, disc_pass=True)
+        _, gen_images, _, _, _, _, _ = self.netG(self.reals, self.gen_conditions, None, disc_pass=True)
 
         #fake discriminator pass
-        fake_disc_in = generated_tex_images.detach()
+        fake_disc_in = gen_images.detach()
         fake_disc_out = self.netD(fake_disc_in)
 
         #real discriminator pass
-        real_disc_in = gen_in
+        real_disc_in = self.reals
 
         # necessary for R1 regularization
         real_disc_in.requires_grad_()
@@ -410,8 +398,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
 
 
     def inference(self, data):
-        # Encode Inputs
-        self.encode_input(data, mode='test')
+        self.set_inputs(data, mode='test')
         if self.isEmpty:
             return
 
@@ -453,9 +440,9 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                     fake_B_tex_rec_input = self.fake_B_tex[i, :, :, :, :]
 
                     if self.isTrain:
-                        self.rec_A_tex[i, :, :, :, :] = self.g_running.infer(fake_B_tex_rec_input, None, self.rec_conditions, within_domain_idx)
+                        self.rec_A_tex[i, :, :, :, :] = self.g_running.infer(fake_B_tex_rec_input, None, self.orig_conditions, within_domain_idx)
                     else:
-                        self.rec_A_tex[i, :, :, :, :] = self.netG.infer(fake_B_tex_rec_input, None, self.rec_conditions, within_domain_idx)
+                        self.rec_A_tex[i, :, :, :, :] = self.netG.infer(fake_B_tex_rec_input, None, self.orig_conditions, within_domain_idx)
 
             visuals = self.get_visuals()
 

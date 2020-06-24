@@ -1,4 +1,4 @@
-### Copyright (C) 2017 NVIDIA Corporation. All rights reserved.
+### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import time
 from collections import OrderedDict
@@ -48,12 +48,6 @@ def train(opt):
     save_delta = total_steps % opt.save_latest_freq
     bSize = opt.batchSize
 
-    # set data conversion function
-    if opt.netG == 'adain_gen' and opt.parsings_transformation and opt.use_expanded_parsings:
-        conversion_func = util.parsingLabels2image
-    else:
-        conversion_func = util.tensor2im
-
     #in case there's no display sample one image from each class to test after every epoch
     if opt.display_id == 0:
         dataset.dataset.set_sample_mode(True)
@@ -72,7 +66,7 @@ def train(opt):
         dataset.num_workers = opt.nThreads
         dataset.dataset.set_sample_mode(False)
 
-    for epoch in range(start_epoch, opt.niter):
+    for epoch in range(start_epoch, opt.epochs):
         epoch_start_time = time.time()
         if epoch != start_epoch:
             epoch_iter = 0
@@ -85,9 +79,10 @@ def train(opt):
             save_fake = (total_steps % opt.display_freq == display_delta) and (opt.display_id > 0)
 
             ############## Network Pass ########################
-            model.encode_input(data)
+            st()
+            model.set_inputs(data)
             disc_losses = model.update_D()
-            gen_losses, gen_in, gen_flow, gen_parsing, opt_flow, gen_tex, rec_tex, cyc_tex, gen_seg, rec_seg, cyc_seg = model.update_G(infer=save_fake)
+            gen_losses, gen_in, gen_out, rec_out, cyc_out = model.update_G(infer=save_fake)
             loss_dict = dict(gen_losses, **disc_losses)
             ##################################################
 
@@ -106,19 +101,19 @@ def train(opt):
                 class_a_suffix = ' class {}'.format(data['A_class'][0])
                 class_b_suffix = ' class {}'.format(data['B_class'][0])
                 classes = None
-                
+
                 visuals = OrderedDict()
                 visuals_A = OrderedDict([('real image' + class_a_suffix, util.tensor2im(gen_in.data[0]))])
                 visuals_B = OrderedDict([('real image' + class_b_suffix, util.tensor2im(gen_in.data[bSize]))])
 
-                A_out_vis = OrderedDict([('synthesized image' + class_b_suffix, conversion_func(gen_tex.data[0]))])
-                B_out_vis = OrderedDict([('synthesized image' + class_a_suffix, conversion_func(gen_tex.data[bSize]))])
-                if opt.lambda_id_tex > 0:
-                    A_out_vis.update([('reconstructed image' + class_a_suffix, conversion_func(rec_tex.data[0]))])
-                    B_out_vis.update([('reconstructed image' + class_b_suffix, conversion_func(rec_tex.data[bSize]))])
-                if opt.lambda_cyc_tex > 0:
-                    A_out_vis.update([('cycled image' + class_a_suffix, conversion_func(cyc_tex.data[0]))])
-                    B_out_vis.update([('cycled image' + class_b_suffix, conversion_func(cyc_tex.data[bSize]))])
+                A_out_vis = OrderedDict([('synthesized image' + class_b_suffix, util.tensor2im(gen_out.data[0]))])
+                B_out_vis = OrderedDict([('synthesized image' + class_a_suffix, util.tensor2im(gen_out.data[bSize]))])
+                if opt.lambda_rec > 0:
+                    A_out_vis.update([('reconstructed image' + class_a_suffix, util.tensor2im(rec_out.data[0]))])
+                    B_out_vis.update([('reconstructed image' + class_b_suffix, util.tensor2im(rec_out.data[bSize]))])
+                if opt.lambda_cyc > 0:
+                    A_out_vis.update([('cycled image' + class_a_suffix, util.tensor2im(cyc_out.data[0]))])
+                    B_out_vis.update([('cycled image' + class_b_suffix, util.tensor2im(cyc_out.data[bSize]))])
 
                 visuals_A.update(A_out_vis)
                 visuals_B.update(B_out_vis)
@@ -142,7 +137,7 @@ def train(opt):
         # end of epoch
         iter_end_time = time.time()
         print('End of epoch %d / %d \t Time Taken: %d sec' %
-              (epoch+1, opt.niter + opt.niter_decay, time.time() - epoch_start_time))
+              (epoch+1, opt.epochs, time.time() - epoch_start_time))
 
         if opt.display_id == 0:
             visuals = model.inference(sample_data)

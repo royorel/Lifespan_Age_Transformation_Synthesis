@@ -1,4 +1,4 @@
-### Copyright (C) 2017 NVIDIA Corporation. All rights reserved.
+### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 from .base_options import BaseOptions
 
@@ -22,6 +22,7 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--phase', type=str, default='train', help='train, val, test, etc')
         self.parser.add_argument('--epochs', type=int, default=400, help='# of epochs to train')
         self.parser.add_argument('--decay_gamma', type=float, default=0.5, help='decay the learning rate by this value')
+        self.parser.add_argument('--decay_epochs', type=str, help='epochs to perform step lr decay')
         self.parser.add_argument('--beta1', type=float, default=0.0, help='momentum term of adam')
         self.parser.add_argument('--beta2', type=float, default=0.999, help='momentum term of adam')
         self.parser.add_argument('--lr', type=float, default=0.001, help='initial learning rate for adam')

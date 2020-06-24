@@ -1,3 +1,5 @@
+### Copyright (C) 2020 Roy Or-El. All rights reserved.
+### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import torch.utils.data
 from data.base_data_loader import BaseDataLoader
 from data.multiclass_unaligned_dataset import MulticlassUnalignedDataset

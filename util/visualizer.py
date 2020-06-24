@@ -1,3 +1,5 @@
+### Copyright (C) 2020 Roy Or-El. All rights reserved.
+### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import numpy as np
 import os
 import cv2
@@ -15,9 +17,7 @@ class Visualizer():
         self.use_html = opt.isTrain and not opt.no_html
         self.win_size = opt.display_winsize
         self.name = opt.name
-        # self.dataset_mode = opt.dataset_mode
         self.numClasses = opt.numClasses
-        self.parsings_transformation = opt.gan_mode == 'seg_only'
         self.img_dir = os.path.join(opt.checkpoints_dir, opt.name, 'images')
         self.isTrain = opt.isTrain
         if self.isTrain:
@@ -27,9 +27,6 @@ class Visualizer():
             import visdom
             self.vis = visdom.Visdom(port = opt.display_port)
             self.display_single_pane_ncols = opt.display_single_pane_ncols
-
-            # from tensorboardX import SummaryWriter
-            # self.writer = SummaryWriter(logdir=os.path.join(opt.checkpoints_dir, opt.name))
 
         if self.use_html:
             self.web_dir = os.path.join(opt.checkpoints_dir, opt.name, 'web')
@@ -44,144 +41,50 @@ class Visualizer():
 
     # |visuals|: dictionary of images to display or save
     def display_current_results(self, visuals, it, classes, ncols):
-        # class_a_str = classes[0]
-        # class_b_str = classes[1]
-        # self.writer.add_text('Current classes', 'Class A: {}. Class B: {}.'.format(class_a_str, class_b_str), global_step=it)
-        # if self.display_id > 0: # show images in the browser
-        #     for tag, image in visuals.items():
-        #         self.writer.add_image(tag, image, global_step=it, dataformats='HWC')
-
-            if self.display_single_pane_ncols > 0:
-                h, w = next(iter(visuals.values())).shape[:2]
-                table_css = """<style>
-    table {border-collapse: separate; border-spacing:4px; white-space:nowrap; text-align:center}
-    table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
+        if self.display_single_pane_ncols > 0:
+            h, w = next(iter(visuals.values())).shape[:2]
+            table_css = """<style>
+table {border-collapse: separate; border-spacing:4px; white-space:nowrap; text-align:center}
+table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
 </style>""" % (w, h)
-                # ncols = self.display_single_pane_ncols
-                title = self.name
-                label_html = ''
-                label_html_row = ''
-                nrows = int(np.ceil(len(visuals.items()) / ncols))
-                images = []
-                idx = 0
-                for label, image_numpy in visuals.items():
-                    label_html_row += '<td>%s</td>' % label
-                    if image_numpy.ndim < 3:
-                        image_numpy = np.expand_dims(image_numpy, 2)
-                        image_numpy = np.tile(image_numpy, (1, 1, 3))
+            # ncols = self.display_single_pane_ncols
+            title = self.name
+            label_html = ''
+            label_html_row = ''
+            nrows = int(np.ceil(len(visuals.items()) / ncols))
+            images = []
+            idx = 0
+            for label, image_numpy in visuals.items():
+                label_html_row += '<td>%s</td>' % label
+                if image_numpy.ndim < 3:
+                    image_numpy = np.expand_dims(image_numpy, 2)
+                    image_numpy = np.tile(image_numpy, (1, 1, 3))
 
-                    images.append(image_numpy.transpose([2, 0, 1]))
-                    idx += 1
-                    if idx % ncols == 0:
-                        label_html += '<tr>%s</tr>' % label_html_row
-                        label_html_row = ''
-                white_image = np.ones_like(image_numpy.transpose([2, 0, 1]))*255
-                while idx % ncols != 0:
-                    images.append(white_image)
-                    label_html_row += '<td></td>'
-                    idx += 1
-                if label_html_row != '':
+                images.append(image_numpy.transpose([2, 0, 1]))
+                idx += 1
+                if idx % ncols == 0:
                     label_html += '<tr>%s</tr>' % label_html_row
-                # pane col = image row
+                    label_html_row = ''
+            white_image = np.ones_like(image_numpy.transpose([2, 0, 1]))*255
+            while idx % ncols != 0:
+                images.append(white_image)
+                label_html_row += '<td></td>'
+                idx += 1
+            if label_html_row != '':
+                label_html += '<tr>%s</tr>' % label_html_row
 
-                self.vis.images(images, nrow=ncols, win=self.display_id + 1,
-                                padding=2, opts=dict(title=title + ' images'))
-                label_html = '<table>%s</table>' % label_html
-                self.vis.text(table_css + label_html, win = self.display_id + 2,
-                              opts=dict(title=title + ' labels'))
-            else:
-                idx = 1
-                for label, image_numpy in visuals.items():
-                    #image_numpy = np.flipud(image_numpy)
-                    self.vis.image(image_numpy.transpose([2,0,1]), opts=dict(title=label),
-                                       win=self.display_id + idx)
-                    idx += 1
+            self.vis.images(images, nrow=ncols, win=self.display_id + 1,
+                            padding=2, opts=dict(title=title + ' images'))
+            label_html = '<table>%s</table>' % label_html
+            self.vis.text(table_css + label_html, win = self.display_id + 2,
+                          opts=dict(title=title + ' labels'))
+        else:
+            idx = 1
+            for label, image_numpy in visuals.items():
+                self.vis.image(image_numpy.transpose([2,0,1]), opts=dict(title=label),
+                                   win=self.display_id + idx)
+                idx += 1
 
-            # if self.use_html: # save images to a html file
-            #     for label, image_numpy in visuals.items():
-            #         img_path = os.path.join(self.img_dir, 'iter%.3d_%s.png' % (it, label))
-            #         util.save_image(image_numpy, img_path)
-            #     # update website
-            #     webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, reflesh=1)
-            #     for n in range(it, 0, -1):  # range(it, 0, -1):
-            #         webpage.add_header('iter [%d]' % n)
-            #         ims = []
-            #         txts = []
-            #         links = []
-            #
-            #         for label, image_numpy in visuals.items():
-            #             img_path = 'iter%.3d_%s.png' % (n, label)
-            #             ims.append(img_path)
-            #             txts.append(label)
-            #             links.append(img_path)
-            #         webpage.add_images(ims, txts, links, width=self.win_size, cols=cols)
-            #     webpage.save()
-
-    def save_current_results(self, visuals, epoch, it):
-        cols = 6
-        counter = 0
-        for label, image_numpy in visuals.items():
-            if image_numpy.ndim < 3:
-                image_numpy = np.expand_dims(image_numpy, 2)
-                image_numpy = np.tile(image_numpy, (1, 1, 3))
-
-            if counter % cols == 0:
-                img = image_numpy
-                class_A = label[-1]
-            else:
-                img = np.concatenate((img, image_numpy), axis=1)
-
-            if counter % cols == 1:
-                class_B = label[-1]
-
-            if counter % cols == cols - 1:
-                if 'img' in label:
-                    img_type = 'img'
-                elif 'mask' in label:
-                    img_type = 'mask'
-                else:
-                    img_type = 'parsings'
-
-                img_path = os.path.join(self.img_dir, 'epoch%.3d_iter%d_%s_classA_%s_classB_%s.png' % (epoch, it, img_type, class_A, class_B))
-                util.save_image(img, img_path)
-            counter += 1
-
-        if self.use_html: # save images to a html file
-            files = os.listdir(self.img_dir)
-            webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, reflesh=1)
-            for n in range(it, 0, -self.save_freq):  # range(it, 0, -1):
-                webpage.add_header('iter [%d]' % n)
-                ims = []
-                txts = []
-                links = []
-                it_paths = [f for f in files if 'iter%d' % n in f]
-                for itp in it_paths:
-                    img_name = os.path.splitext(itp)[0]
-                    ims.append(itp)
-                    txts.append(img_name)
-                    links.append(itp)
-                webpage.add_images(ims, txts, links, width=self.win_size)
-            webpage.save()
-
-    def plot_multiple_graphs(self, epoch, counter_ratio, opt, errors):
-        if not hasattr(self, 'plot_data'):
-            self.plot_data = {}
-            for name in errors.keys():
-                self.plot_data[name] = {'X':[],'Y':[]}
-
-        i = 0
-        for name, value in errors.items():
-            self.plot_data[name]['X'].append(epoch + counter_ratio)
-            self.plot_data[name]['Y'].append(value)
-            self.vis.line(
-                X=np.array(self.plot_data[name]['X']),
-                Y=np.array(self.plot_data[name]['Y']),
-                opts={
-                    'title': name + ' loss over time',
-                    'xlabel': 'epoch',
-                    'ylabel': 'loss'},
-                win=self.display_id + 3 + i)
-            i += 1
 
     # errors: dictionary of error labels and values
     def plot_current_errors(self, epoch, counter_ratio, opt, errors):
@@ -198,10 +101,6 @@ class Visualizer():
                 'xlabel': 'epoch',
                 'ylabel': 'loss'},
             win=self.display_id)
-
-    # def plot_current_errors(self, iter, errors):
-    #     for key, item in errors.items():
-    #         self.writer.add_scalar(key, item, global_step=iter)
 
     # errors: same format as |errors| of plotCurrentErrors
     def print_current_errors(self, epoch, i, errors, t):

@@ -1,3 +1,5 @@
+### Copyright (C) 2020 Roy Or-El. All rights reserved.
+### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import os.path
 import re
 import torch
@@ -98,7 +100,7 @@ class MulticlassUnalignedDataset(BaseDataset):
     def mask_image(self, img, parsings):
         labels_to_mask = [0,14,15,16,18]
         for idx in labels_to_mask:
-            img[parsings == idx] = 127.5
+            img[parsings == idx] = 128
 
         return img
 
@@ -112,9 +114,9 @@ class MulticlassUnalignedDataset(BaseDataset):
         img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 3)
 
         parsing_path = os.path.join(path_dir, 'parsings', im_name + '.png')
-        parsing = Image.open(parsing_path).convert('L')
-        parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 1)
-        img = self.mask_image(img, parsing)
+        parsing = Image.open(parsing_path).convert('RGB')
+        parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
+        img = Image.fromarray(self.mask_image(img, parsing))
         img = self.transform(img)
 
         return {'Imgs': img,
@@ -144,14 +146,14 @@ class MulticlassUnalignedDataset(BaseDataset):
             B_img = np.array(B_img.getdata(), dtype=np.uint8).reshape(B_img.size[1], B_img.size[0], 3)
 
             A_parsing_path = self.parsing_paths[self.class_A_idx][index_A]
-            A_parsing = Image.open(A_parsing_path).convert('L')
-            A_parsing = np.array(A_parsing.getdata(), dtype=np.uint8).reshape(A_parsing.size[1], A_parsing.size[0], 1)
-            A_img = self.mask_image(A_img, A_parsing)
+            A_parsing = Image.open(A_parsing_path).convert('RGB')
+            A_parsing = np.array(A_parsing.getdata(), dtype=np.uint8).reshape(A_parsing.size[1], A_parsing.size[0], 3)
+            A_img = Image.fromarray(self.mask_image(A_img, A_parsing))
 
             B_parsing_path = self.parsing_paths[self.class_B_idx][index_B]
-            B_parsing = Image.open(B_parsing_path).convert('L')
-            B_parsing = np.array(B_parsing.getdata(), dtype=np.uint8).reshape(B_parsing.size[1], B_parsing.size[0], 1)
-            B_img = self.mask_image(B_img, B_parsing)
+            B_parsing = Image.open(B_parsing_path).convert('RGB')
+            B_parsing = np.array(B_parsing.getdata(), dtype=np.uint8).reshape(B_parsing.size[1], B_parsing.size[0], 3)
+            B_img = Image.fromarray(self.mask_image(B_img, B_parsing))
 
             # numpy conversions are an annoying hack to form a PIL image with more than 3 channels
             A_img = self.transform(A_img)
@@ -180,9 +182,9 @@ class MulticlassUnalignedDataset(BaseDataset):
                 img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 3)
 
                 parsing_path = self.parsing_paths[i][ind]
-                parsing = Image.open(parsing_path).convert('L')
-                parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 1)
-                img = self.mask_image(img, parsing)
+                parsing = Image.open(parsing_path).convert('RGB')
+                parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
+                img = Image.fromarray(self.mask_image(img, parsing))
 
                 img = self.transform(img)
 

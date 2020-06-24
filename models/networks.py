@@ -1,4 +1,4 @@
-### Copyright (C) 2017 NVIDIA Corporation. All rights reserved.
+### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import torch
 import torch.nn as nn
@@ -649,12 +649,12 @@ class StyledDecoder(nn.Module):
 
 class Generator(nn.Module):
     def __init__(self, input_nc, output_nc, ngf=64, style_dim=50, n_downsampling=2,
-                 n_blocks=4, adaptive_blocks=4, norm_layer=nn.BatchNorm2d,
+                 n_blocks=4, adaptive_blocks=4, id_enc_norm=PixelNorm,
                  padding_type='reflect', conv_weight_norm=False,
                  decoder_norm='pixel', actvn='lrelu', normalize_mlp=False,
                  modulated_conv=False):
         super(Generator, self).__init__()
-        self.id_encoder = IdentityEncoder(input_nc, ngf, n_downsampling, n_blocks, norm_layer,
+        self.id_encoder = IdentityEncoder(input_nc, ngf, n_downsampling, n_blocks, id_enc_norm,
                                           padding_type, conv_weight_norm=conv_weight_norm,
                                           actvn='relu') # replacing relu with leaky relu here causes nans and the entire training to collapse immediately
         self.age_encoder = AgeEncoder(input_nc, ngf=ngf, n_downsampling=4, style_dim=style_dim,
@@ -683,7 +683,7 @@ class Generator(nn.Module):
             return None, None, None, None
 
     #parallel forward
-    def forward(self, input, cyc_age_code, target_age_code, source_age_code=None, disc_pass=False):
+    def forward(self, input, target_age_code, source_age_code, disc_pass=False):
         orig_id_features = self.id_encoder(input)
         orig_age_features = self.age_encoder(input)
         if disc_pass:
@@ -699,7 +699,7 @@ class Generator(nn.Module):
         else:
             fake_id_features = self.id_encoder(gen_out)
             fake_age_features = self.age_encoder(gen_out)
-            cyc_out = self.decode(fake_id_features, cyc_age_code)
+            cyc_out = self.decode(fake_id_features, source_age_code)
         return rec_out, gen_out, cyc_out, orig_id_features, orig_age_features, fake_id_features, fake_age_features
 
 
