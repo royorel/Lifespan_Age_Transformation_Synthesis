@@ -49,7 +49,6 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         self.ngf_global = self.ngf
 
         self.numClasses = opt.numClasses
-        self.use_orig_age_features_within_domain = opt.use_orig_age_features_within_domain
         self.use_moving_avg = not opt.no_moving_avg
 
         self.no_cond_noise = opt.no_cond_noise
@@ -418,29 +417,23 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
 
                 self.get_conditions(mode='test')
 
-                within_domain_idx = -1
-                self.fake_B = self.netG.infer(self.reals, self.gen_conditions, within_domain_idx, traverse=self.traverse, deploy=self.deploy, interp_step=self.opt.interp_step)
+                self.fake_B = self.netG.infer(self.reals, self.gen_conditions, traverse=self.traverse, deploy=self.deploy, interp_step=self.opt.interp_step)
             else:
                 for i in range(self.numClasses):
                     self.class_B = self.Tensor(self.numValid).long().fill_(i)
                     self.get_conditions(mode='test')
 
-                    if self.use_orig_age_features_within_domain:
-                        within_domain_idx = i
-                    else:
-                        within_domain_idx = -1
-
                     if self.isTrain:
-                        self.fake_B[i, :, :, :, :] = self.g_running.infer(self.reals, self.gen_conditions, within_domain_idx)
+                        self.fake_B[i, :, :, :, :] = self.g_running.infer(self.reals, self.gen_conditions)
                     else:
-                        self.fake_B[i, :, :, :, :] = self.netG.infer(self.reals, self.gen_conditions, within_domain_idx)
+                        self.fake_B[i, :, :, :, :] = self.netG.infer(self.reals, self.gen_conditions)
 
                     cyc_input = self.fake_B[i, :, :, :, :]
 
                     if self.isTrain:
-                        self.cyc_A[i, :, :, :, :] = self.g_running.infer(cyc_input, self.orig_conditions, within_domain_idx)
+                        self.cyc_A[i, :, :, :, :] = self.g_running.infer(cyc_input, self.orig_conditions)
                     else:
-                        self.cyc_A[i, :, :, :, :] = self.netG.infer(cyc_input, self.orig_conditions, within_domain_idx)
+                        self.cyc_A[i, :, :, :, :] = self.netG.infer(cyc_input, self.orig_conditions)
 
             visuals = self.get_visuals()
 

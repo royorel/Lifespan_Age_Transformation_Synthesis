@@ -53,7 +53,6 @@ class BaseOptions():
         self.parser.add_argument('--no_cond_noise', action='store_true', help='remove gaussian noise from latent age code')
         self.parser.add_argument('--gen_dim_per_style', type=int, default=50, help='per class dimension of adain generator style latent code')
         self.parser.add_argument('--n_downsample', type=int, default=2, help='number of downsampling layers in generator')
-        self.parser.add_argument('--use_orig_age_features_within_domain', action='store_true', help='if specified, use_original age features for within domain forward pass of adain generator')
         self.parser.add_argument('--verbose', action='store_true', default = False, help='toggles verbose')
 
         self.initialized = True

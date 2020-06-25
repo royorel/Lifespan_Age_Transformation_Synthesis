@@ -703,12 +703,8 @@ class Generator(nn.Module):
         return rec_out, gen_out, cyc_out, orig_id_features, orig_age_features, fake_id_features, fake_age_features
 
 
-    def infer(self, input, target_age_features, within_domain_idx=-1, traverse=False, deploy=False, interp_step=0.5):
+    def infer(self, input, target_age_features, traverse=False, deploy=False, interp_step=0.5):
         id_features = self.id_encoder(input)
-        if within_domain_idx > -1:
-            age_features = self.age_encoder(input)
-            target_age_features[within_domain_idx] = age_features[within_domain_idx]
-
         out = self.decode(id_features, target_age_features, traverse=traverse, deploy=deploy, interp_step=interp_step)
         return out
 
