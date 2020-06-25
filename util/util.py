@@ -1,14 +1,9 @@
 ### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-from __future__ import print_function
 import torch
 import numpy as np
 from PIL import Image
-import inspect, re
 import os
-import collections
-import math
-# from skimage import color
 from pdb import set_trace as st
 
 # Converts a Tensor into a Numpy array

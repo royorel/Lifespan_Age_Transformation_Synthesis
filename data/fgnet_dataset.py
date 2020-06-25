@@ -1,7 +1,6 @@
 ### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import os.path
-import re
 import torch
 import numpy as np
 from data.base_dataset import BaseDataset, get_transform
@@ -72,40 +71,6 @@ class FGNET_Dataset(BaseDataset):
             img[parsings == idx] = 127.5
 
         return img
-
-    # def rescale(self, img, is_rgb=True, method=Image.BICUBIC):
-    #     iw, ih = img.size
-    #     if is_rgb:
-    #         oc = 3
-    #     else:
-    #         oc = 1
-    #
-    #     if iw == self.opt.fineSize and ih == self.opt.fineSize:
-    #         return np.array(img.getdata(), dtype=np.uint8).reshape(ih, iw, oc)
-    #
-    #     if ih >= iw:
-    #         ow = int(self.opt.fineSize * iw / ih)
-    #         oh = self.opt.fineSize
-    #     else:
-    #         ow = self.opt.fineSize
-    #         oh = int(self.opt.fineSize * ih / iw)
-    #
-    #     new_im = np.array((img.resize((ow, oh), method)).getdata(), dtype=np.uint8).reshape(oh, ow, oc)
-    #     # make the image square
-    #     aspect_ratio = float(new_im.shape[0])/float(new_im.shape[1])
-    #
-    #     if aspect_ratio > 1: #more rows than columns
-    #         diff = float(new_im.shape[0] - new_im.shape[1])
-    #         first_pad = np.zeros((new_im.shape[0], int(np.floor(diff/2)), new_im.shape[2]), dtype=np.uint8)
-    #         second_pad = np.zeros((new_im.shape[0], int(np.ceil(diff/2)), new_im.shape[2]), dtype=np.uint8)
-    #         new_im = np.concatenate((first_pad, new_im, second_pad), axis=1)
-    #     elif aspect_ratio < 1: #more columns than rows
-    #         diff = float(new_im.shape[1] - new_im.shape[0])
-    #         first_pad = np.zeros((int(np.floor(diff/2)), new_im.shape[1], new_im.shape[2]), dtype=np.uint8)
-    #         second_pad = np.zeros((int(np.ceil(diff/2)), new_im.shape[1], new_im.shape[2]), dtype=np.uint8)
-    #         new_im = np.concatenate((first_pad, new_im, second_pad), axis=0)
-    #
-    #     return new_im
 
     def __getitem__(self, index):
         curr_id = self.ids[index]
