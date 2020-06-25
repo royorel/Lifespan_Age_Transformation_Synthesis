@@ -28,7 +28,7 @@ class CustomDatasetDataLoader(BaseDataLoader):
 
 
 def CreateDataset(opt):
-    if opt.fgnet:
+    if (not opt.isTrain) and opt.fgnet:
         dataset = FGNET_Dataset()
     else:
         dataset = MulticlassUnalignedDataset()
