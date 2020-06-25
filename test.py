@@ -80,7 +80,7 @@ def test(opt):
 
             visualizer.save_images(webpage, visuals, img_path)
 
-            webpage.save() # it was put inside the loop to be able to see partial results
+            webpage.save()
 
 
 if __name__ == "__main__":

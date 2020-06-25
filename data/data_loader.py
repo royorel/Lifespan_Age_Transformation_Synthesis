@@ -3,6 +3,7 @@
 import torch.utils.data
 from data.base_data_loader import BaseDataLoader
 from data.multiclass_unaligned_dataset import MulticlassUnalignedDataset
+from data.fgnet_dataset import FGNET_Dataset
 from pdb import set_trace as st
 
 class CustomDatasetDataLoader(BaseDataLoader):
@@ -27,7 +28,10 @@ class CustomDatasetDataLoader(BaseDataLoader):
 
 
 def CreateDataset(opt):
-    dataset = MulticlassUnalignedDataset()
+    if opt.fgnet:
+        dataset = FGNET_Dataset()
+    else:
+        dataset = MulticlassUnalignedDataset()
     print("dataset [%s] was created" % (dataset.name()))
     dataset.initialize(opt)
     return dataset

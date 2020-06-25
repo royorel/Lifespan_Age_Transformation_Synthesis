@@ -96,7 +96,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                 print('---------- Networks initialized -------------')
 
         # load networks
-        if not self.isTrain or opt.continue_train or opt.load_pretrain:
+        if (not self.isTrain) or opt.continue_train or opt.load_pretrain:
             pretrained_path = '' if (not self.isTrain) or (self.isTrain and opt.continue_train) else opt.load_pretrain
             if self.isTrain:
                 self.load_network(self.netG, 'G_tex', opt.which_epoch, pretrained_path)
@@ -419,7 +419,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                 self.get_conditions(mode='test')
 
                 within_domain_idx = -1
-                self.fake_B = self.netG.infer(self.reals, None, self.gen_conditions, within_domain_idx, traverse=self.traverse, deploy=self.deploy, interp_step=self.opt.interp_step)
+                self.fake_B = self.netG.infer(self.reals, self.gen_conditions, within_domain_idx, traverse=self.traverse, deploy=self.deploy, interp_step=self.opt.interp_step)
             else:
                 for i in range(self.numClasses):
                     self.class_B = self.Tensor(self.numValid).long().fill_(i)
@@ -483,12 +483,6 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
             curr_real_A = real_A[i, :, :, :]
             real_A_img = curr_real_A[:, :, :3]
 
-            # set output classes numebr
-            if self.traverse:
-                out_classes = curr_fake_B_tex.shape[0]
-            else:
-                out_classes = self.numClasses
-
             # start with age progression/regression images
             if self.traverse or self.deploy:
                 curr_fake_B_tex = fake_B_tex
@@ -498,6 +492,12 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                 orig_dict = OrderedDict([('orig_img_cls_' + str(self.class_A[i].item()), real_A_img)])
 
             return_dicts[i].update(orig_dict)
+
+            # set output classes numebr
+            if self.traverse:
+                out_classes = curr_fake_B_tex.shape[0]
+            else:
+                out_classes = self.numClasses
 
             for j in range(out_classes):
                 fake_res_tex = curr_fake_B_tex[j, :, :, :3]

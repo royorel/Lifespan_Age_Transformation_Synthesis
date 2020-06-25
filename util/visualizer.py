@@ -231,10 +231,7 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
 
     # save image to the disk
     def save_images(self, webpage, visuals, image_path, gt_visuals=None, gt_path=None):
-        if self.parsings_transformation:
-            cols = self.numClasses+2
-        else:
-            cols = self.numClasses+1
+        cols = self.numClasses+1
         image_dir = webpage.get_image_dir()
         if gt_visuals == None or gt_path == None:
             for i in range(len(visuals)):

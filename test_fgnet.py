@@ -56,19 +56,13 @@ def test_fgnet(opt):
     # create website
     gender = os.path.basename(opt.dataroot)
     web_dir = './evaluation/FGNET/results/fgnet_{}_eval_{}'.format(gender, opt.name)
-    counter = 1
-
     if not os.path.isdir(web_dir):
         os.makedirs(web_dir)
-    else:
-        while os.path.isdir(web_dir + '_' + str(counter)):
-            counter += 1
-        os.makedirs(web_dir + '_' + str(counter))
 
-    web_dir = web_dir + '_' + str(counter)
     webpage = html.HTML(web_dir, 'FGNET Evaluation - {}s'.format(gender))
 
     # evaluate
+    st()
     for i, data in enumerate(dataset):
         if i >= opt.how_many:
             break

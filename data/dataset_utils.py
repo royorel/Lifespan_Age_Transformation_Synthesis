@@ -21,8 +21,10 @@ def list_folder_images(dir, opt):
         if is_image_file(fname):
             path = os.path.join(dir, fname)
             # make sure there's a matching parsings for the image
-            if os.path.isfile(os.path.join(dir, 'parsings', fname)):
-                parsing_path = os.path.join(dir, 'parsings', fname)
+            # parsing files must be png
+            parsing_fname = fname[:-3] + 'png'
+            if os.path.isfile(os.path.join(dir, 'parsings', parsing_fname)):
+                parsing_path = os.path.join(dir, 'parsings', parsing_fname)
                 images.append(path)
                 parsings.append(parsing_path)
 

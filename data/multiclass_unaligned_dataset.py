@@ -59,7 +59,6 @@ class MulticlassUnalignedDataset(BaseDataset):
         self.numClasses = len(self.classNames)
         opt.numClasses = self.numClasses
         opt.classNames = self.classNames
-        # opt.active_classes_mapping = self.active_classes_mapping
 
         # set class counter for test mode
         if self.opt.isTrain is False:
@@ -81,6 +80,7 @@ class MulticlassUnalignedDataset(BaseDataset):
             self.sizes += [len(self.img_paths[-1])]
 
         opt.dataset_size = self.__len__()
+
         self.transform = get_transform(opt)
 
     def set_sample_mode(self, mode=False):
@@ -117,7 +117,7 @@ class MulticlassUnalignedDataset(BaseDataset):
         parsing = Image.open(parsing_path).convert('RGB')
         parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
         img = Image.fromarray(self.mask_image(img, parsing))
-        img = self.transform(img)
+        img = self.transform(img).unsqueeze(0)
 
         return {'Imgs': img,
                 'Paths': [path],

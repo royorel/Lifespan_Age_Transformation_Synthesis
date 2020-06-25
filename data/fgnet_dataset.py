@@ -2,17 +2,12 @@
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import os.path
 import re
-import pickle
 import torch
-import torchvision.transforms as transforms
-from data.base_dataset import BaseDataset, get_transform
-from data.image_folder import make_dataset
-from PIL import Image
-import PIL
-from pdb import set_trace as st
-import random
 import numpy as np
-import util.util as util
+from data.base_dataset import BaseDataset, get_transform
+from data.dataset_utils import list_folder_images
+from PIL import Image
+from pdb import set_trace as st
 
 
 TEX_CLASSES_UPPER_BOUNDS = [2, 6, 9, 14, 19, 29, 39, 49, 69, 120]
@@ -39,14 +34,13 @@ class FGNET_Dataset(BaseDataset):
             self.active_classes_mapping[i] = self.name_mapping[name]
             self.inv_active_classes_mapping[self.name_mapping[name]] = i
 
+        self.num_classes = len(self.active_classes_mapping)
         opt.numClasses = len(self.active_classes_mapping)
-        opt.active_classes_mapping = self.active_classes_mapping
 
         # arrange directories
         self.img_paths = []
         self.parsing_paths = []
-
-        self.img_paths, self.parsing_paths = make_dataset(opt.dataroot, self.opt)
+        self.img_paths, self.parsing_paths = list_folder_images(opt.dataroot, self.opt)
 
         self.ids = []
         for curr_path in self.img_paths:
@@ -62,14 +56,9 @@ class FGNET_Dataset(BaseDataset):
         self.transform = get_transform(opt)
 
     def age2class(self, age):
-        if self.num_flow_classes == 2:
-            cluster_boundaries = [self.ages[0] + 1]
-        else:
-            cluster_boundaries = [3,7,10,15,20,30,40,50,70]
-
         cluster = 0
-        for i in range(len(cluster_boundaries)):
-            if age < cluster_boundaries[i]:
+        for i in range(len(TEX_CLASSES_UPPER_BOUNDS)):
+            if age <= TEX_CLASSES_UPPER_BOUNDS[i]:
                 break
             else:
                 cluster += 1
@@ -146,12 +135,10 @@ class FGNET_Dataset(BaseDataset):
             valid += [True]
 
             img = Image.open(curr_img).convert('RGB')
-            img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 1)
-
-            parsing = Image.open(curr_parsing).convert('L')
-            parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 1)
-            img = self.mask_image(img, parsing)
-
+            img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 3)
+            parsing = Image.open(curr_parsing).convert('RGB')
+            parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
+            img = Image.fromarray(self.mask_image(img, parsing))
             img = self.transform(img).unsqueeze(0)
 
             if out_imgs is None:
