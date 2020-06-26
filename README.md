@@ -17,7 +17,7 @@ This code is the official PyTorch implementation of the paper:
 
 ## Ethics & Bias statement
 ### Intended use:
- - This algorithm is designed to simulate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/hers/theirs lifespan. 
+ - This algorithm is designed to simulate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/her/their lifespan. 
  - The main usecases of this method are approximating the appearance of missing people or for art and entertainment purposes (CGI effects, Camera filters, etc.).
  - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other from of legal evidence under any circumstances_**
 
