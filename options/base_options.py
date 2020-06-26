@@ -36,7 +36,7 @@ class BaseOptions():
 
         # for displays
         self.parser.add_argument('--display_winsize', type=int, default=256,  help='display window size')
-        self.parser.add_argument('--display_port', type=int, default=8096, help='visdom port of the web display')
+        self.parser.add_argument('--display_port', type=int, default=8097, help='visdom port of the web display')
         self.parser.add_argument('--display_id', type=int, default=1, help='window id of the web display')
 
         # for generator
