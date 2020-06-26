@@ -10,7 +10,10 @@
 
 ## Overview
 Lifespan Age Transformation Synthesis is a GAN based method designed to simulate the countinuous aging process from a single input image.<br>
-This code is the official PyTorch implementation of the paper.
+This code is the official PyTorch implementation of the paper:
+> **Lifespan Age Transformation Synthesis**<br>
+> Roy Or-El, Soumyadip Sengupta, Ohad Fried, Eli Shechtman, Ira Kemelmacher-Shlizerman<br>
+> https://arxiv.org/pdf/2003.09764.pdf
 
 ## Ethics & Bias statement
 ### Intended use:
