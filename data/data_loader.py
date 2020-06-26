@@ -1,17 +1,16 @@
 ### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import torch.utils.data
-from data.base_data_loader import BaseDataLoader
 from data.multiclass_unaligned_dataset import MulticlassUnalignedDataset
 from data.fgnet_dataset import FGNET_Dataset
 from pdb import set_trace as st
 
-class CustomDatasetDataLoader(BaseDataLoader):
+class AgingDataLoader():
     def name(self):
-        return 'CustomDatasetDataLoader'
+        return 'AgingDataLoader'
 
     def initialize(self, opt):
-        BaseDataLoader.initialize(self, opt)
+        self.opt = opt
         self.dataset = CreateDataset(opt)
         self.dataloader = torch.utils.data.DataLoader(
             self.dataset,
@@ -38,7 +37,7 @@ def CreateDataset(opt):
 
 
 def CreateDataLoader(opt):
-    data_loader = CustomDatasetDataLoader()
+    data_loader = AgingDataLoader()
     print(data_loader.name())
     data_loader.initialize(opt)
     return data_loader

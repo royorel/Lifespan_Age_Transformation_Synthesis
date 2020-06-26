@@ -785,10 +785,12 @@ class StyleGANDiscriminator(nn.Module):
 
         output_nc = numClasses
         self.gan_head = nn.Sequential(padding_layer(1), EqualConv2d(nf+1, nf, kernel_size=3), activation,
-                                      EqualConv2d(nf, output_nc, kernel_size=4), activation)
+                                      # this matches the arch. that was used to produce results in the original paper
+                                      # EqualConv2d(nf, output_nc, kernel_size=4))#, activation#)
+
                                       # this fixes the arch. mistake from the original paper (forgot to add the 1x1 convolution at the output)
-                                      #EqualConv2d(nf, nf, kernel_size=4), activation,
-                                      #EqualConv2d(nf, output_nc, kernel_size=1))
+                                      EqualConv2d(nf, nf, kernel_size=4), activation,
+                                      EqualConv2d(nf, output_nc, kernel_size=1))
 
     def minibatch_stdev(self, input):
         out_std = torch.sqrt(input.var(0, unbiased=False) + 1e-8)

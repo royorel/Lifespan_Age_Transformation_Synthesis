@@ -15,11 +15,6 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
     def name(self):
         return 'LATS'
 
-    def init_loss_filter(self):
-        def loss_filter(g_gan, g_cycle, g_rec, d_real, d_fake, grad_penalty, identity_reconst, age_reconst):
-            return [l for l in (g_gan, g_cycle, g_rec, d_real, d_fake, grad_penalty, identity_reconst, age_reconst)]
-        return loss_filter
-
     def initialize(self, opt):
         BaseModel.initialize(self, opt)
 
@@ -117,11 +112,6 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
             self.identity_reconst_criterion = self.parallelize(networks.FeatureConsistency())
             self.criterionCycle = self.parallelize(networks.FeatureConsistency()) #torch.nn.L1Loss()
             self.criterionRec = self.parallelize(networks.FeatureConsistency()) #torch.nn.L1Loss()
-
-            # Names so we can breakout loss
-            self.loss_filter = self.init_loss_filter()
-            self.loss_names = self.loss_filter('G_Adv','G_Cycle','G_Rec','D_real', 'D_fake', 'Grad_penalty',
-                                               'Identity_reconst', 'Age_reconst')
 
             # initialize optimizers
             self.old_lr = opt.lr
@@ -347,7 +337,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                 if self.opt.lambda_cyc > 0:
                     cyc_images_out = cyc_images
 
-        loss_dict = {'loss_G_GAN': loss_G_GAN.mean(), 'loss_G_Cycle': loss_G_Cycle.mean(),
+        loss_dict = {'loss_G_Adv': loss_G_GAN.mean(), 'loss_G_Cycle': loss_G_Cycle.mean(),
                      'loss_G_Rec': loss_G_Rec.mean(), 'loss_G_identity_reconst': loss_G_identity_reconst.mean(),
                      'loss_G_age_reconst': loss_G_age_reconst.mean()}
 

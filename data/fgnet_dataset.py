@@ -3,8 +3,8 @@
 import os.path
 import torch
 import numpy as np
-from data.base_dataset import BaseDataset, get_transform
-from data.dataset_utils import list_folder_images
+from data.base_dataset import BaseDataset
+from data.dataset_utils import list_folder_images, get_transform
 from PIL import Image
 from pdb import set_trace as st
 

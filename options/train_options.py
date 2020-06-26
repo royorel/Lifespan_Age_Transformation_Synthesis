@@ -25,7 +25,7 @@ class TrainOptions(BaseOptions):
         self.parser.add_argument('--decay_epochs', type=str, help='epochs to perform step lr decay')
         self.parser.add_argument('--beta1', type=float, default=0.0, help='momentum term of adam')
         self.parser.add_argument('--beta2', type=float, default=0.999, help='momentum term of adam')
-        self.parser.add_argument('--lr', type=float, default=0.001, help='initial learning rate for adam')
+        self.parser.add_argument('--lr', type=float, default=0.0001, help='initial learning rate for adam')
         self.parser.add_argument('--decay_adain_affine_layers', action='store_true', help='when true adain affine layer learning rate is decayed by 0.01')
 
         # for discriminators
