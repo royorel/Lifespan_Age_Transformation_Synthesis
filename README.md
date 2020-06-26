@@ -19,7 +19,7 @@ This code is the official PyTorch implementation of the paper:
 ### Intended use:
  - This algorithm is designed to simulate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/hers/theirs lifespan. 
  - The main usecases of this method are approximating the appearance of missing people or for art and entertainment purposes (CGI effects, Camera filters, etc.).
- - **_The results of this method should not be used as grounds for detention/arrest or as any other legal evidence under any circumstances_**
+ - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other from of legal evidence under any circumstances_**
 
 ### Algorithm & data bias:<br>
 We have devoted maximal efforts in our algorithm design to ensure that the identity of the person in the input image is preserved and no inherent dataset biases are introduced at the output. These measures include:
