@@ -17,17 +17,17 @@ This code is the official PyTorch implementation of the paper:
 
 ## Ethics & Bias statement
 ### Intended use:
- - This algorithm is designed to simulate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/her/their lifespan. 
- - The main usecases of this method are approximating the appearance of missing people or for art and entertainment purposes (CGI effects, Camera filters, etc.).
+ - This algorithm is designed to hallucinate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/her/their lifespan. 
+ - The main usecases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method results might be inaccurate and biased. The output of the our method should be critically analyzined by a trained professional, and not be treated as an absolute ground truth.
  - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other from of legal evidence under any circumstances_**
 
 ### Algorithm & data bias:<br>
-We have devoted maximal efforts in our algorithm design to ensure that the identity of the person in the input image is preserved and no inherent dataset biases are introduced at the output. These measures include:
-1. Designing identity encoder architecture to preserve the local structures of the input image. This plays a key role in maintaining the person's identity at the output.
-2. Including losses that were designed to maintain the person's identity in our training scheme. These losses make sure that the encoded identity features are consistent across ages (latent identity loss), that the network can reproduce the original image from its output (cycle loss) and that the network learns to reconstruct the input if the target age class is the same as the source age class as the (self-reconstruction loss).
-3. To avoid introducing any gender bias in the dataset to the results, e.g. producing male facial features for females at a ceratin age range or vice versa, we have trained two separate models, one for males and one for females. Our dataset contains binary gender labels, which we used to select the training and testing data for each model. On the other hand, our algorithmic pipeline does not contain any gender classification of the input image, the decision of which model to apply is left for the user. We acknowledge that gender is non-binary and that our design choices restrict our algorithm from simulating the aging process of people whose gender is non-binary. Further work is required to make sure future algorithms will be able to simulate aging for the entire gender spectrum.
+We have devoted considerable efforts in our algorithm design to preserve the identity of the person in the input image, and to minimize the influence of the inherent dataset biases on the results. These measures include:
+1. Designing the identity encoder architecture to preserve the local structures of the input image. 
+2. Including training losses that were designed to maintain the person's identity. These losses make sure that the encoded identity features are consistent across ages (latent identity loss), that the network can reproduce the original image from its output (cycle loss) and that the network learns to reconstruct the input if the target age class is the same as the source age class (self-reconstruction loss).
+3. The FFHQ dataset contains gender imbalance within age classes. To prevent introducing these biases in the output, e.g. producing male facial features for females or vice versa, we have trained two separate models, one for males and one for females. The decision of which model to apply is left for the user. We acknowledge that gender is non-binary and that this design choice restrict our algorithm from simulating the aging process of people whose gender is non-binary. Further work is required to make sure future algorithms will be able to simulate aging for the entire gender spectrum.
 
-Despite these measures, we are aware that the network might still introduce other biases that we didn't consider when we designed the algorithm. If you spot any bias in the results, please inform us, so that we can make an effort to correct it.
+Despite these measures, the network might still introduce other biases that we did not consider when designing the algorithm. If you spot any bias in the results, please reach out to help future research!
 
 ## Pre-Requisits
 You must have a **GPU with CUDA support** in order to run the code.
