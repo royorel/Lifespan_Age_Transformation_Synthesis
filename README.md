@@ -17,7 +17,7 @@ This code is the official PyTorch implementation of the paper:
 
 ## Ethics & Bias statement
 ### Intended use:
- - This algorithm is designed to simulate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/hers/theirs lifespan. 
+ - This algorithm is designed to simulate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/her/their lifespan. 
  - The main usecases of this method are approximating the appearance of missing people or for art and entertainment purposes (CGI effects, Camera filters, etc.).
  - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other from of legal evidence under any circumstances_**
 
@@ -30,7 +30,7 @@ We have devoted maximal efforts in our algorithm design to ensure that the ident
 Despite these measures, we are aware that the network might still introduce other biases that we didn't consider when we designed the algorithm. If you spot any bias in the results, please inform us, so that we can make an effort to correct it.
 
 ## Pre-Requisits
-You must have a **GPU with CUDA support** in order to run code.
+You must have a **GPU with CUDA support** in order to run the code.
 
 This code requires **PyTorch** to be installed, please go to [Pytorch.org](https://pytorch.org/) for installation info.<br>
 We tested our code on PyTorch 1.4.0, but the code should run on any PyTorch version above 1.0.0.
