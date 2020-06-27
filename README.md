@@ -58,7 +58,7 @@ Try running the method on your own image...<br>
 2. Prune & organize the raw FFHQ-Aging dataset into age classes:
 ```
 cd datasets
-python create_dataset.py --folder [path to raw FFHQ-Aging] [--train_split] [num of training images (default=69000)]
+python create_dataset.py --folder <path to raw FFHQ-Aging> [--train_split] [num of training images (default=69000)]
 ```
 
 3. Download pretrained models (Optional, coming soon)<br>
