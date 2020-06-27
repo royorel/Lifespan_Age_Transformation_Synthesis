@@ -114,5 +114,5 @@ if __name__ == '__main__':
     argparser.add_argument('--train_split', type=int, default=69000, help='number of images to allocate for training')
     args = argparser.parse_args()
     folder = args.folder
-    train_split = args.folder.train_split
+    train_split = args.train_split
     create_dataset(folder, train_split)
