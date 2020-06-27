@@ -49,7 +49,7 @@ def processIm(img_filename, phase, csv_row):
     with open('counter.pkl','wb') as f:
         pickle.dump(num,f)
 
-def create_dataset(folder, train_split):
+def create_dataset(folder, labels_file, train_split):
     # create a dictionary of all images as well as parsings directory
     imgs = {}
     img_subdirs = next(os.walk(folder))[1]
@@ -90,7 +90,6 @@ def create_dataset(folder, train_split):
             os.makedirs(os.path.join(testFemleClusterPath,'parsings'))
 
     # process images
-    labels_file = os.path.join(folder, 'ffhq_labels.csv')
     with open(labels_file,'r', newline='') as f:
         reader = csv.DictReader(f)
         for csv_row in reader:
@@ -110,9 +109,11 @@ def create_dataset(folder, train_split):
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser()
-    argparser.add_argument('--folder', type=str, default='../../ffhq_aging256x256', help='Location of the raw FFHQ-Aging dataset')
+    argparser.add_argument('--folder', type=str, default='../../FFHQ-Aging-Dataset/ffhq_aging256x256', help='Location of the raw FFHQ-Aging dataset')
+    argparser.add_argument('--labels_file', type=str, default='../../FFHQ-Aging-Dataset/ffhq_aging_labels.csv', help='Location of the raw FFHQ-Aging dataset')
     argparser.add_argument('--train_split', type=int, default=69000, help='number of images to allocate for training')
     args = argparser.parse_args()
     folder = args.folder
+    labels_file = args.labels_file
     train_split = args.train_split
-    create_dataset(folder, train_split)
+    create_dataset(folder, labels_file, train_split)
