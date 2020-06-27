@@ -11,7 +11,7 @@ from pdb import set_trace as st
 clusters = ['0-2','3-6','7-9','10-14','15-19',
             '20-29','30-39','40-49','50-69','70-120']
 
-def processIm(img_filename, phase, csv_row):
+def processIm(img_filename, phase, csv_row, num):
     img_basename = os.path.basename(img_filename)
     labels_filename = os.path.join(os.path.dirname(img_filename), 'parsings', img_basename)
 
@@ -49,7 +49,7 @@ def processIm(img_filename, phase, csv_row):
     with open('counter.pkl','wb') as f:
         pickle.dump(num,f)
 
-def create_dataset(folder, labels_file, train_split, num):
+def create_dataset(folder, labels_file, train_split):
     # create a dictionary of all images as well as parsings directory
     imgs = {}
     img_subdirs = next(os.walk(folder))[1]
