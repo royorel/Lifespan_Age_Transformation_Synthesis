@@ -49,7 +49,7 @@ def processIm(img_filename, phase, csv_row):
     with open('counter.pkl','wb') as f:
         pickle.dump(num,f)
 
-def create_dataset(folder, labels_file, train_split):
+def create_dataset(folder, labels_file, train_split, num):
     # create a dictionary of all images as well as parsings directory
     imgs = {}
     img_subdirs = next(os.walk(folder))[1]
@@ -104,7 +104,7 @@ def create_dataset(folder, labels_file, train_split):
 
             img_filename = imgs[num]
             print('processing {}'.format(img_filename))
-            processIm(img_filename, phase, csv_row)
+            processIm(img_filename, phase, csv_row, num)
 
 
 if __name__ == '__main__':
