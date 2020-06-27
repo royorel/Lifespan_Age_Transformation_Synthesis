@@ -3,7 +3,6 @@
 import numpy as np
 import os
 import cv2
-import ntpath
 import time
 import unidecode
 from . import util
@@ -177,7 +176,7 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
 
         orig_labels = [key for key in gt_visuals.keys()]
         for i in range(batchSize):
-            short_path = ntpath.basename(image_path[i])
+            short_path = os.path.basename(image_path[i])
             name = os.path.splitext(short_path)[0]
             print("saving results for: " + name)
 
@@ -236,7 +235,7 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
         if gt_visuals == None or gt_path == None:
             for i in range(len(visuals)):
                 visual = visuals[i]
-                short_path = ntpath.basename(image_path[i])
+                short_path = os.path.basename(image_path[i])
                 name = unidecode.unidecode(os.path.splitext(short_path)[0]) #removes accents which cause html load error
                 webpage.add_header(name)
                 ims = []
@@ -257,7 +256,7 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
 
             # save ground truth images
             if gt_path is not None:
-                gt_short_path = ntpath.basename(gt_path[0])
+                gt_short_path = os.path.basename(gt_path[0])
                 gt_name = os.path.splitext(gt_path)[0]
                 gt_ims = []
                 gt_txts = []
@@ -272,7 +271,7 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
                     gt_links.append(image_name)
 
             for i in range(batchSize):
-                short_path = ntpath.basename(image_path[i])
+                short_path = os.path.basename(image_path[i])
                 name = os.path.splitext(short_path)[0]
 
                 # webpage.add_header(name)
