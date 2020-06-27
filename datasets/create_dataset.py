@@ -50,20 +50,6 @@ def processIm(img_filename, phase, csv_row, num):
         pickle.dump(num,f)
 
 def create_dataset(folder, labels_file, train_split):
-    # create a dictionary of all images as well as parsings directory
-    imgs = {}
-    img_subdirs = next(os.walk(folder))[1]
-    img_subdirs.sort()
-    file_counter = 0
-    for subdir in img_subdirs:
-        temp_files = os.listdir(os.path.join(folder,subdir))
-        temp_files.sort()
-        files = [f for f in temp_files if os.path.isfile(os.path.join(folder,subdir,f))]
-
-        for f in files:
-            imgs[file_counter] = os.path.join(folder,subdir,f)
-            file_counter += 1
-
     # that's a small mechanism to remember the last successfully processed images
     # in case the code stops
     try:
@@ -102,9 +88,13 @@ def create_dataset(folder, labels_file, train_split):
             else:
                 phase = 'test'
 
-            img_filename = imgs[num]
-            print('processing {}'.format(img_filename))
-            processIm(img_filename, phase, csv_row, num)
+            subdir = str(num - (num % 1000)).zfill(5)
+            img_filename = os.path.join(folder,subdir,str(num).zfill(5)+'.png')
+            if os.path.isfile(img_filename):
+                print('processing {}'.format(img_filename))
+                processIm(img_filename, phase, csv_row, num)
+            else:
+                print('Image {}.png was not found'.format(str(num).zfill(5)))
 
 
 if __name__ == '__main__':
