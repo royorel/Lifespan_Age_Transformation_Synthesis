@@ -66,37 +66,37 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 ### Training:
 1. Open a visdom port to view loss plots and intermediate results. Run ```visdom``` and monitor results at [http://localhost:8097](http://localhost:8097). If you run the code on a remote server open ```http://hostname:8097``` instead.
 2. Open ```run_scripts/train.sh``` (Linux) or ```run_scripts/train.bat``` (windows) and set:
-  - The dataset relative path ```--dataroot```
-  - The model name ```--name```
-  - The GPUs you indend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.
-  - The batch size ```--batchSize``` according to your GPU's maximum RAM capacity and the number of GPU's available.
+   - The dataset relative path ```--dataroot```
+   - The model name ```--name```
+   - The GPUs you indend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.
+   - The batch size ```--batchSize``` according to your GPU's maximum RAM capacity and the number of GPU's available.
 3. Train the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
 
 ### Testing:
 1. Open ```run_scripts/test.sh``` (Linux) or ```run_scripts/test.bat``` (windows) and set:
-  - The dataset relative path ```--dataroot```
-  - The model name ```--name```
-  - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
+   - The dataset relative path ```--dataroot```
+   - The model name ```--name```
+   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
 2. Test the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
 3. The outputs can be seen in results/<model name>/test_<model_checkpoint>/index.html
 
 ### Generate Video
 1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
 2. Open ```run_scripts/traversal.sh``` (Linux) or ```run_scripts/traversal.bat``` (windows) and set:
-  - The dataset relative path ```--dataroot```
-  - The model name ```--name```
-  - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
-  - The relative path to the image list ```--image_path_file```
+   - The dataset relative path ```--dataroot```
+   - The model name ```--name```
+   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
+   - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/traversal.sh``` (Linux) or ```./run_scripts/traversal.bat``` (windows)
 4. The output videos will be saved to results/<model name>/traversal/
 
 ### Generate anchor age classes images
 1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
 2. Open ```run_scripts/deploy.sh``` (Linux) or ```run_scripts/deploy.bat``` (windows) and set:
-  - The dataset relative path ```--dataroot```
-  - The model name ```--name```
-  - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
-  - The relative path to the image list ```--image_path_file```
+   - The dataset relative path ```--dataroot```
+   - The model name ```--name```
+   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
+   - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
 4. The output images will be saved to results/<model name>/deploy/
 
