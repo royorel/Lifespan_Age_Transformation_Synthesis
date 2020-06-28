@@ -5,7 +5,6 @@ import PIL.Image as Image
 import os
 import csv
 import shutil
-import pickle
 from pdb import set_trace as st
 
 clusters = ['0-2','3-6','7-9','10-14','15-19',
@@ -46,18 +45,8 @@ def processIm(img_filename, phase, csv_row, num):
         shutil.copy(img_filename, dst_path)
         shutil.copy(labels_filename, parsing_dst_path)
 
-    with open('counter.pkl','wb') as f:
-        pickle.dump(num,f)
 
 def create_dataset(folder, labels_file, train_split):
-    # that's a small mechanism to remember the last successfully processed images
-    # in case the code stops
-    try:
-        with open('counter.pkl','rb') as f:
-            counter = pickle.load(f)
-    except:
-        counter = -1
-
     # create all necessary subfolders
     for clust in clusters:
         trainMaleClusterPath = "males/train" + clust
@@ -80,8 +69,6 @@ def create_dataset(folder, labels_file, train_split):
         reader = csv.DictReader(f)
         for csv_row in reader:
             num = int(csv_row['image_number'])
-            if num <= counter:
-                continue
 
             if num < train_split:
                 phase = 'train'

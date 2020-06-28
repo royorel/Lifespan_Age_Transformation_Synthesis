@@ -32,18 +32,16 @@ Despite these measures, the network might still introduce other biases that we d
 ## Pre-Requisits
 You must have a **GPU with CUDA support** in order to run the code.
 
-This code requires **PyTorch** to be installed, please go to [Pytorch.org](https://pytorch.org/) for installation info.<br>
-We tested our code on PyTorch 1.4.0, but the code should run on any PyTorch version above 1.0.0.
+This code requires **PyTorch** and **torchvision** to be installed, please go to [Pytorch.org](https://pytorch.org/) for installation info.<br>
+We tested our code on PyTorch 1.4.0 and torchvision 0.5.0, but the code should run on any PyTorch version above 1.0.0, and any torchvision version above 0.4.0.
 
 Overall, the following python packages should be installed:
-1. torch (PyTorch)
-2. torchvision
-3. opencv-python
-4. visdom
-5. dominate
-6. numpy
-7. pillow
-8. ntpath
+1. opencv-python
+2. visdom
+3. dominate
+4. numpy
+5. pillow
+6. unidecode
 
 If any of these packages are not installed on your computer, you can install them using the supplied `requirements.txt` file:<br>
 ```pip install -r requirements.txt```
@@ -78,6 +76,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 1. Open ```run_scripts/test.sh``` (Linux) or ```run_scripts/test.bat``` (windows) and set:
   - The dataset relative path ```--dataroot```
   - The model name ```--name```
+  - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
 2. Test the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
 
 ### Generate Video
@@ -85,8 +84,18 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 2. Open ```run_scripts/traversal.sh``` (Linux) or ```run_scripts/traversal.bat``` (windows) and set:
   - The dataset relative path ```--dataroot```
   - The model name ```--name```
+  - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
   - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/traversal.sh``` (Linux) or ```./run_scripts/traversal.bat``` (windows)
+
+### Generate anchor age classes images
+1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
+2. Open ```run_scripts/deploy.sh``` (Linux) or ```run_scripts/deploy.bat``` (windows) and set:
+  - The dataset relative path ```--dataroot```
+  - The model name ```--name```
+  - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
+  - The relative path to the image list ```--image_path_file```
+3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
 
 ## Citation
 ```

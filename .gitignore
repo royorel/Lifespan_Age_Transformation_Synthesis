@@ -1,4 +1,6 @@
 checkpoints/
+datasets/males
+datasets/females
 results/
 build/
 evaluation/
