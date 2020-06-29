@@ -26,7 +26,7 @@ class BaseOptions():
         # for setting inputs
         self.parser.add_argument('--dataroot', type=str, default='../Combined_Face_Dataset_with_masks_HQ200/males/')
         self.parser.add_argument('--sort_classes', type=bool, default=True, help='a flag that indicates whether to sort the classes')
-        self.parser.add_argument('--sort_order', type=str, help='a specific order to sort the classes, must contain all classes, only works when sort_classes is true')
+        self.parser.add_argument('--sort_order', type=str, default='0-2,3-6,7-9,15-19,30-39,50-69', help='a specific order to sort the classes, must contain all classes, only works when sort_classes is true')
         self.parser.add_argument('--resize_or_crop', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop|crop|scale_width|scale_width_and_crop]')
         self.parser.add_argument('--serial_batches', action='store_true', help='if true, takes images in order to make batches, otherwise takes them randomly')
         self.parser.add_argument('--no_flip', action='store_true', help='if specified, do not flip the images for data argumentation')
@@ -40,13 +40,13 @@ class BaseOptions():
         self.parser.add_argument('--display_id', type=int, default=1, help='window id of the web display')
 
         # for generator
-        self.parser.add_argument('--use_modulated_conv', action='store_true', help='if specified, use modulated conv layers in the decoder like in StyleGAN2')
-        self.parser.add_argument('--conv_weight_norm', action='store_true', help='if specified, use weight normalization in conv and linear layers like in progrssive growing of GANs')
+        self.parser.add_argument('--use_modulated_conv', type=bool, default=True, help='if specified, use modulated conv layers in the decoder like in StyleGAN2')
+        self.parser.add_argument('--conv_weight_norm', type=bool, default=True, help='if specified, use weight normalization in conv and linear layers like in progrssive growing of GANs')
         self.parser.add_argument('--id_enc_norm', type=str, default='pixel', help='instance, pixel normalization')
         self.parser.add_argument('--decoder_norm',type=str, default='pixel', choices=['pixel','none'], help='type of upsampling layers normalization')
         self.parser.add_argument('--n_adaptive_blocks', type=int, default=4, help='# of adaptive normalization blocks')
         self.parser.add_argument('--activation',type=str, default='lrelu', choices=['relu','lrelu'], help='type of generator activation layer')
-        self.parser.add_argument('--normalize_mlp', action='store_true', help='if specified, normalize the generator MLP inputs and outputs')
+        self.parser.add_argument('--normalize_mlp', type=bool, default=True, help='if specified, normalize the generator MLP inputs and outputs')
         self.parser.add_argument('--no_moving_avg', action='store_true', help='if specified, do not use moving average network')
         self.parser.add_argument('--use_resblk_pixel_norm', action='store_true', help='if specified, apply pixel norm on the resnet block outputs')
         self.parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in first conv layer')

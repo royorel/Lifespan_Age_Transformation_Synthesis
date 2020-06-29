@@ -7,6 +7,7 @@ import random
 import numpy as np
 from data.base_dataset import BaseDataset
 from data.dataset_utils import list_folder_images, get_transform
+from util.preprocess_itw_im import preprocessInTheWildImage
 from PIL import Image
 from pdb import set_trace as st
 
@@ -22,6 +23,7 @@ class MulticlassUnalignedDataset(BaseDataset):
         self.class_A = -1
         self.class_B = -1
         self.get_samples = False
+        self.in_the_wild = opt.in_the_wild
 
         # find all existing classes in root
         self.tempClassNames = []
@@ -83,6 +85,9 @@ class MulticlassUnalignedDataset(BaseDataset):
 
         self.transform = get_transform(opt)
 
+        if self.in_the_wild:
+            self.preprocessor = preprocessInTheWildImage(out_size=opt.fineSize)
+
     def set_sample_mode(self, mode=False):
         self.get_samples = mode
         self.class_counter = 0
@@ -113,9 +118,14 @@ class MulticlassUnalignedDataset(BaseDataset):
 
         img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 3)
 
-        parsing_path = os.path.join(path_dir, 'parsings', im_name + '.png')
-        parsing = Image.open(parsing_path).convert('RGB')
-        parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
+        if self.in_the_wild:
+            parsing = self.preprocessor.forward(img)
+        else:
+            parsing_path = os.path.join(path_dir, 'parsings', im_name + '.png')
+            parsing = Image.open(parsing_path).convert('RGB')
+            parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
+
+        st()
         img = Image.fromarray(self.mask_image(img, parsing))
         img = self.transform(img).unsqueeze(0)
 

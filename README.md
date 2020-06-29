@@ -40,8 +40,10 @@ Overall, the following python packages should be installed:
 2. visdom
 3. dominate
 4. numpy
-5. pillow
-6. unidecode
+5. scipy
+6. pillow
+7. unidecode
+8. requests
 
 If any of these packages are not installed on your computer, you can install them using the supplied `requirements.txt` file:<br>
 ```pip install -r requirements.txt```

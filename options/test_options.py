@@ -5,13 +5,14 @@ from .base_options import BaseOptions
 class TestOptions(BaseOptions):
     def initialize(self):
         BaseOptions.initialize(self)
-        self.parser.add_argument('--fgnet', action='store_true', help='for evaluating on the FGNET dataset')
         self.parser.add_argument('--random_seed', type=int, default=-1, help='random seed for generating different outputs from the same model.')
         self.parser.add_argument('--ntest', type=int, default=float("inf"), help='# of test examples.')
         self.parser.add_argument('--results_dir', type=str, default='./results/', help='saves results here.')
         self.parser.add_argument('--phase', type=str, default='test', help='train, val, test, etc')
         self.parser.add_argument('--which_epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         self.parser.add_argument('--how_many', type=int, default=50, help='how many test images to run')
+        self.parser.add_argument('--fgnet', action='store_true', help='for evaluating on the FGNET dataset')
+        self.parser.add_argument('--in_the_wild', action='store_true', help='for evaluating on the FGNET dataset')
         self.parser.add_argument('--traverse', action='store_true', help='when true, run latent space traversal on a list of images')
         self.parser.add_argument('--full_progression', action='store_true', help='when true, deploy mode saves all outputs as a single image')
         self.parser.add_argument('--make_video', action='store_true', help='when true, make a video from the traversal results')

@@ -1,7 +1,9 @@
 checkpoints/
+deeplab_model/
 datasets/males
 datasets/females
 results/
 build/
 evaluation/
 */__pycache__/*
+*.dat

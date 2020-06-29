@@ -25,7 +25,7 @@ def test(opt):
     visualizer = Visualizer(opt)
     model = create_model(opt)
     model.eval()
-
+    st()
     # create webpage
     if opt.random_seed != -1:
         exp_dir = '%s_%s_seed%s' % (opt.phase, opt.which_epoch, str(opt.random_seed))

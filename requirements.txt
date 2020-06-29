@@ -2,5 +2,7 @@ opencv-python
 visdom
 dominate
 numpy
+scipy
 pillow
 unidecode
+requests
