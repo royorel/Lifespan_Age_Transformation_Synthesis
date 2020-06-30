@@ -23,7 +23,8 @@ class MulticlassUnalignedDataset(BaseDataset):
         self.class_A = -1
         self.class_B = -1
         self.get_samples = False
-        self.in_the_wild = opt.in_the_wild
+        if not self.opt.isTrain:
+            self.in_the_wild = opt.in_the_wild
 
         # find all existing classes in root
         self.tempClassNames = []
@@ -85,7 +86,7 @@ class MulticlassUnalignedDataset(BaseDataset):
 
         self.transform = get_transform(opt)
 
-        if self.in_the_wild:
+        if (not self.opt.isTrain) and self.in_the_wild:
             self.preprocessor = preprocessInTheWildImage(out_size=opt.fineSize)
 
     def set_sample_mode(self, mode=False):
