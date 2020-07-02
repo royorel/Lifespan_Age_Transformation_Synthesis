@@ -100,7 +100,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
-4. The output images will be saved to results/\<model name>/test_\<model_checkpoint>/test_\<model_checkpoint>/deploy/
+4. The output images will be saved to results/\<model name>/test_\<model_checkpoint>/deploy/
 
 ## Citation
 ```
