@@ -78,29 +78,29 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 1. Open ```run_scripts/test.sh``` (Linux) or ```run_scripts/test.bat``` (windows) and set:
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
-   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
-2. Test the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
-3. The outputs can be seen in results/<model name>/test_<model_checkpoint>/index.html
+   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
+2. Test the model: Run```./run_scripts/test.sh``` (Linux) or ```./run_scripts/test.bat``` (windows)
+3. The outputs can be seen in results/\<model name>/test_\<model_checkpoint>/index.html
 
 ### Generate Video
 1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
 2. Open ```run_scripts/traversal.sh``` (Linux) or ```run_scripts/traversal.bat``` (windows) and set:
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
-   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
+   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/traversal.sh``` (Linux) or ```./run_scripts/traversal.bat``` (windows)
-4. The output videos will be saved to results/<model name>/traversal/
+4. The output videos will be saved to results/\<model name>/test_\<model_checkpoint>/traversal/
 
 ### Generate anchor age classes images
 1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
 2. Open ```run_scripts/deploy.sh``` (Linux) or ```run_scripts/deploy.bat``` (windows) and set:
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
-   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. '''400''' or the latest saved model '''latest'''.
+   - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
-4. The output images will be saved to results/<model name>/deploy/
+4. The output images will be saved to results/\<model name>/test_\<model_checkpoint>/test_\<model_checkpoint>/deploy/
 
 ## Citation
 ```
