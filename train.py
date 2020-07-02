@@ -1,6 +1,7 @@
 ### Copyright (C) 2020 Roy Or-El. All rights reserved.
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import time
+import scipy # this is to prevent a potential error caused by importing torch before scipy (happens due to a bad combination of torch & scipy versions)
 from collections import OrderedDict
 from options.train_options import TrainOptions
 from data.data_loader import CreateDataLoader

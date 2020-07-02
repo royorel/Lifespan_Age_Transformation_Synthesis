@@ -18,7 +18,7 @@ This code is the official PyTorch implementation of the paper:
 ## Ethics & Bias statement
 ### Intended use:
  - This algorithm is designed to hallucinate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/her/their lifespan.
- - The main usecases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method results might be inaccurate and biased. The output of the our method should be critically analyzined by a trained professional, and not be treated as an absolute ground truth.
+ - The main usecases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method, results might be inaccurate and biased. The output of the our method should be critically analyzed by a trained professional, and not be treated as an absolute ground truth.
  - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other from of legal evidence under any circumstances_**
 
 ### Algorithm & data bias:<br>
@@ -32,10 +32,10 @@ Despite these measures, the network might still introduce other biases that we d
 ## Pre-Requisits
 You must have a **GPU with CUDA support** in order to run the code.
 
-This code requires **PyTorch** and **torchvision** to be installed, please go to [Pytorch.org](https://pytorch.org/) for installation info.<br>
+This code requires **PyTorch** and **torchvision** to be installed, please go to [PyTorch.org](https://pytorch.org/) for installation info.<br>
 We tested our code on PyTorch 1.4.0 and torchvision 0.5.0, but the code should run on any PyTorch version above 1.0.0, and any torchvision version above 0.4.0.
 
-Overall, the following python packages should be installed:
+The following python packages should also be installed:
 1. opencv-python
 2. visdom
 3. dominate
@@ -68,9 +68,9 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 ### Training:
 1. Open a visdom port to view loss plots and intermediate results. Run ```visdom``` and monitor results at [http://localhost:8097](http://localhost:8097). If you run the code on a remote server open ```http://hostname:8097``` instead.
 2. Open ```run_scripts/train.sh``` (Linux) or ```run_scripts/train.bat``` (windows) and set:
+   - The GPUs you intend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
-   - The GPUs you indend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.
    - The batch size ```--batchSize``` according to your GPU's maximum RAM capacity and the number of GPU's available.
 3. Train the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
 
