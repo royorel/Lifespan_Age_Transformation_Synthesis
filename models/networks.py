@@ -683,7 +683,7 @@ class Generator(nn.Module):
             return None
 
     #parallel forward
-    def forward(self, input, target_age_code, source_age_code, disc_pass=False):
+    def forward(self, input, target_age_code, cyc_age_code, source_age_code, disc_pass=False):
         orig_id_features = self.id_encoder(input)
         orig_age_features = self.age_encoder(input)
         if disc_pass:
@@ -699,7 +699,7 @@ class Generator(nn.Module):
         else:
             fake_id_features = self.id_encoder(gen_out)
             fake_age_features = self.age_encoder(gen_out)
-            cyc_out = self.decode(fake_id_features, source_age_code)
+            cyc_out = self.decode(fake_id_features, cyc_age_code)
         return rec_out, gen_out, cyc_out, orig_id_features, orig_age_features, fake_id_features, fake_age_features
 
 
@@ -785,12 +785,7 @@ class StyleGANDiscriminator(nn.Module):
 
         output_nc = numClasses
         self.gan_head = nn.Sequential(padding_layer(1), EqualConv2d(nf+1, nf, kernel_size=3), activation,
-                                      # this matches the arch. that was used to produce results in the original paper
-                                      # EqualConv2d(nf, output_nc, kernel_size=4), activation)
-
-                                      # this fixes the arch. mistake from the original paper (forgot to add the 1x1 convolution at the output)
-                                      EqualConv2d(nf, nf, kernel_size=4), activation,
-                                      EqualConv2d(nf, output_nc, kernel_size=1))
+                                      EqualConv2d(nf, output_nc, kernel_size=4), activation)
 
     def minibatch_stdev(self, input):
         out_std = torch.sqrt(input.var(0, unbiased=False) + 1e-8)

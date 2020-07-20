@@ -7,9 +7,15 @@ import uuid
 import hashlib
 import requests
 import torch
+import zipfile
 import numpy as np
 from PIL import Image
 from pdb import set_trace as st
+
+
+males_file_spec = dict(file_url='https://drive.google.com/uc?id=1MsXN54hPi9PWDmn1HKdmKfv-J5hWYFVZ', file_path='checkpoints/', file_size=213,175,683, file_md5='0079186147ec816176b946a073d1f396')
+females_file_spec = dict(file_url='https://drive.google.com/uc?id=1LNm0zAuiY0CIJnI0lHTq1Ttcu9_M1NAJ', file_path='checkpoints/', file_size=213,218,113, file_md5='0675f809413c026170cf1f22b27f3c5d')
+
 
 # Converts a Tensor into a Numpy array
 # |imtype|: the desired type of the converted numpy array
@@ -48,6 +54,27 @@ def mkdirs(paths):
 def mkdir(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
+def download_pretrained_models():
+    print('Downloading males model')
+    with requests.Session() as session:
+        download_file(session, males_model_spec)
+
+    print('Extracting males model zip file')
+    with zipfile.ZipFile('./checkpoints/males_model.zip','r') as zip_fname:
+        zip_fname.extractall('./checkpoints')
+
+    print('Done!')
+
+    print('Downloading females model')
+    with requests.Session() as session:
+        download_file(session, females_model_spec)
+
+    print('Extracting females model zip file')
+    with zipfile.ZipFile('./checkpoints/females_model.zip','r') as zip_fname:
+        zip_fname.extractall('./checkpoints')
+
+    print('Done!')
 
 def download_file(session, file_spec, chunk_size=128, num_attempts=10):
     file_path = file_spec['file_path']

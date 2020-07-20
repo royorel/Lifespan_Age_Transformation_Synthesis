@@ -13,19 +13,23 @@ Lifespan Age Transformation Synthesis is a GAN based method designed to simulate
 This code is the official PyTorch implementation of the paper:
 > **Lifespan Age Transformation Synthesis**<br>
 > Roy Or-El, Soumyadip Sengupta, Ohad Fried, Eli Shechtman, Ira Kemelmacher-Shlizerman<br>
+> ECCV 2020<br>
 > https://arxiv.org/pdf/2003.09764.pdf
 
 ## Ethics & Bias statement
 ### Intended use:
- - This algorithm is designed to hallucinate the aging proccess and produce an **_approximation_** of a person's appearance throughout his/her/their lifespan.
- - The main usecases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method, results might be inaccurate and biased. The output of the our method should be critically analyzed by a trained professional, and not be treated as an absolute ground truth.
- - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other from of legal evidence under any circumstances_**
+ - This algorithm is designed to hallucinate the aging process and produce an **approximation** of a person's appearance throughout his/her/their lifespan. throughout his/her/their lifespan.
+ - The main use cases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method, results might be inaccurate and biased. The output of our method should be critically analyzed by a trained professional, and not be treated as an absolute ground truth.
+ - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other form of legal evidence under any circumstances._**
 
 ### Algorithm & data bias:<br>
 We have devoted considerable efforts in our algorithm design to preserve the identity of the person in the input image, and to minimize the influence of the inherent dataset biases on the results. These measures include:
 1. Designing the identity encoder architecture to preserve the local structures of the input image.
-2. Including training losses that were designed to maintain the person's identity. These losses make sure that the encoded identity features are consistent across ages (latent identity loss), that the network can reproduce the original image from its output (cycle loss) and that the network learns to reconstruct the input if the target age class is the same as the source age class (self-reconstruction loss).
-3. The FFHQ dataset contains gender imbalance within age classes. To prevent introducing these biases in the output, e.g. producing male facial features for females or vice versa, we have trained two separate models, one for males and one for females. The decision of which model to apply is left for the user. We acknowledge that gender is non-binary and that this design choice restrict our algorithm from simulating the aging process of people whose gender is non-binary. Further work is required to make sure future algorithms will be able to simulate aging for the entire gender spectrum.
+2. Including training losses that were designed to maintain the person's identity.
+    - Latent Identity loss: encourages identity features that are consistent across ages.
+    - Cycle loss: drives the network to reproduce the original image from any aged output.
+    - Self-reconstruction loss: makes the network learn to reconstruct the input when the target age class is the same as the source age class.
+3. The FFHQ dataset contains gender imbalance within age classes. To prevent introducing these biases in the output, e.g. producing male facial features for females or vice versa, we have trained two separate models, one for males and one for females. The decision of which model to apply is left for the user. We acknowledge that this design choice restricts our algorithm from simulating the aging process of people whose gender is non-binary. Further work is required to make sure future algorithms will be able to simulate aging for the entire gender spectrum.
 
 Despite these measures, the network might still introduce other biases that we did not consider when designing the algorithm. If you spot any bias in the results, please reach out to help future research!
 
@@ -48,8 +52,18 @@ The following python packages should also be installed:
 If any of these packages are not installed on your computer, you can install them using the supplied `requirements.txt` file:<br>
 ```pip install -r requirements.txt```
 
+## Using your own image
+If you want to try the method on images outside of the provided dataset, please make sure your images follow these guidelines:
+1. Image was taken from a digital camera (phone cameras are fine). Old images from film cameras would produce low quality results.
+2. Pure RGB images only. No black & white, grayscale, sepia, or filtered images (e.g. Instagram filters).
+3. Person's head should directly face the camera. Looking sideways/downwards/upwards degrades the results.
+4. The person's face should not be occluded (or partially occluded) by any item.
+5. Both eyes should be open and visible. (eye glasses are ok, no sunglasses)
+
+All of the above cases were under represented or not represented at all in the training data. Therefore, the network would produce degraded outputs or artifacts for this kind of images.
+
 ## Quick Demo (Coming soon)
-Try running the method on your own image...<br>
+You can try running the method on your own image...<br>
 ```Coming soon```
 
 ## Get Started
@@ -61,8 +75,8 @@ cd datasets
 python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_file <path to raw FFHQ-Aging labels csv file> [--train_split] [num of training images (default=69000)]
 ```
 
-3. Download pretrained models (Optional, coming soon)<br>
-```coming soon```
+3. Download pretrained models (Optional)<br>
+```python download_models.py```
 
 ## Usage
 ### Training:
@@ -111,9 +125,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
           and Fried, Ohad
           and Shechtman, Eli
           and Kemelmacher-Shlizerman, Ira},
-  eprint={2003.09764},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV}
+  booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
   year={2020}
 }
 ```

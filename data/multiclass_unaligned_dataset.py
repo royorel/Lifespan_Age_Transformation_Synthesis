@@ -126,7 +126,6 @@ class MulticlassUnalignedDataset(BaseDataset):
             parsing = Image.open(parsing_path).convert('RGB')
             parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
 
-        st()
         img = Image.fromarray(self.mask_image(img, parsing))
         img = self.transform(img).unsqueeze(0)
 

@@ -55,10 +55,8 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         # self.active_classes_mapping = opt.active_classes_mapping
 
         if not self.isTrain:
-            self.fgnet = opt.fgnet
             self.debug_mode = opt.debug_mode
         else:
-            self.fgnet = False
             self.debug_mode = False
 
         ##### define networks
@@ -257,13 +255,13 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         if mode == 'train':
             self.gen_conditions =  torch.cat((condG_A_gen, condG_B_gen), 0) #torch.cat((self.class_B, self.class_A), 0)
             # if the results are not good this might be the issue!!!! uncomment and update code respectively
-            # self.rec_conditions = torch.cat((condG_B_gen, condG_A_gen), 0)
+            self.cyc_conditions = torch.cat((condG_B_gen, condG_A_gen), 0)
             self.orig_conditions = torch.cat((condG_A_orig, condG_B_orig),0)
         else:
             self.gen_conditions = condG_A_gen #self.class_B
             if not (self.traverse or self.deploy):
                 # if the results are not good this might be the issue!!!! uncomment and update code respectively
-                # self.rec_conditions = condG_B_gen #self.class_A
+                self.cyc_conditions = condG_B_gen #self.class_A
                 self.orig_conditions = condG_A_orig
 
 
@@ -275,7 +273,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         ############### multi GPU ###############
         rec_images, gen_images, cyc_images, orig_id_features, \
         orig_age_features, fake_id_features, fake_age_features = \
-        self.netG(self.reals, self.gen_conditions, self.orig_conditions)
+        self.netG(self.reals, self.gen_conditions, self.cyc_conditions, self.orig_conditions)
 
         #discriminator pass
         disc_out = self.netD(gen_images)
@@ -329,7 +327,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                     fake_id_features_out, _ = self.g_running.encode(gen_images)
                     #decode generated
                     if self.opt.lambda_cyc > 0:
-                        cyc_images_out = self.g_running.decode(fake_id_features_out, self.orig_conditions)
+                        cyc_images_out = self.g_running.decode(fake_id_features_out, self.cyc_conditions)
             else:
                 gen_images_out = gen_images
                 if self.opt.lambda_rec > 0:
@@ -354,7 +352,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         self.get_conditions()
 
         ############### multi GPU ###############
-        _, gen_images, _, _, _, _, _ = self.netG(self.reals, self.gen_conditions, None, disc_pass=True)
+        _, gen_images, _, _, _, _, _ = self.netG(self.reals, self.gen_conditions, None, None, disc_pass=True)
 
         #fake discriminator pass
         fake_disc_in = gen_images.detach()
@@ -421,9 +419,9 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                     cyc_input = self.fake_B[i, :, :, :, :]
 
                     if self.isTrain:
-                        self.cyc_A[i, :, :, :, :] = self.g_running.infer(cyc_input, self.orig_conditions)
+                        self.cyc_A[i, :, :, :, :] = self.g_running.infer(cyc_input, self.cyc_conditions)
                     else:
-                        self.cyc_A[i, :, :, :, :] = self.netG.infer(cyc_input, self.orig_conditions)
+                        self.cyc_A[i, :, :, :, :] = self.netG.infer(cyc_input, self.cyc_conditions)
 
             visuals = self.get_visuals()
 
@@ -488,7 +486,7 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
                 return_dicts[i].update(fake_dict_tex)
 
             if not (self.traverse or self.deploy):
-                if self.debug_mode and (not self.fgnet):
+                if self.debug_mode:
                     # continue with tex reconstructions
                     curr_rec_A_tex = rec_A_tex[:, i, :, :, :]
                     orig_dict = OrderedDict([('orig_img2', real_A_img)])
