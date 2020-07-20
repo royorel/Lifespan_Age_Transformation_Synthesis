@@ -8,6 +8,19 @@
 [Ira Kemelmacher-Shlizerman](https://homes.cs.washington.edu/~kemelmi/)<sup>1</sup><br>
 <sup>1</sup>University of Washington, <sup>2</sup>Stanford University, <sup>3</sup>Adobe Research
 
+<div align="center">
+<img src=./gifs/001_input.gif>
+<img src=./gifs/69005.gif>
+<img src=./gifs/69131.gif>
+<img src=./gifs/69508.gif>
+<img src=./gifs/69587.gif><br>
+<img src=./gifs/010_input.gif>
+<img src=./gifs/69036.gif>
+<img src=./gifs/69338.gif>
+<img src=./gifs/69577.gif>
+<img src=./gifs/69859.gif>
+</div>
+
 ## Overview
 Lifespan Age Transformation Synthesis is a GAN based method designed to simulate the countinuous aging process from a single input image.<br>
 This code is the official PyTorch implementation of the paper:
