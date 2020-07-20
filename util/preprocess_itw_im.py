@@ -187,4 +187,5 @@ class preprocessInTheWildImage():
         landmarks = self.extract_face_landmarks(img)
         aligned_img = self.align_in_the_wild_image(img, landmarks)
         seg_map = self.get_segmentation_maps(aligned_img)
-        return seg_map
+        aligned_img = np.array(aligned_img.getdata(), dtype=np.uint8).reshape(self.out_size, self.out_size, 3)
+        return aligned_img, seg_map

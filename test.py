@@ -48,16 +48,16 @@ def test(opt):
             data = dataset.dataset.get_item_from_path(image_path)
             visuals = model.inference(data)
             if opt.traverse and opt.make_video:
-                out_path = os.path.join(output_dir, os.path.basename(image_path) + '.mp4')
+                out_path = os.path.join(output_dir, os.path.basename(image_path[:-4]) + '.mp4')
                 visualizer.make_video(visuals, out_path)
             elif opt.traverse or (opt.deploy and opt.full_progression):
                 if opt.traverse and opt.compare_to_trained_outputs:
-                    out_path = os.path.join(output_dir, os.path.basename(image_path) + '_compare_to_{}_jump_{}.png'.format(opt.compare_to_trained_class, opt.trained_class_jump))
+                    out_path = os.path.join(output_dir, os.path.basename(image_path[:-4]) + '_compare_to_{}_jump_{}.png'.format(opt.compare_to_trained_class, opt.trained_class_jump))
                 else:
-                    out_path = os.path.join(output_dir, os.path.basename(image_path) + '.png')
+                    out_path = os.path.join(output_dir, os.path.basename(image_path[:-4]) + '.png')
                 visualizer.save_row_image(visuals, out_path, traverse=opt.traverse)
             else:
-                out_path = os.path.join(output_dir, os.path.basename(image_path))
+                out_path = os.path.join(output_dir, os.path.basename(image_path[:-4]))
                 visualizer.save_images_deploy(visuals, out_path)
     else:
         webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.which_epoch))

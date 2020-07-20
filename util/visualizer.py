@@ -169,64 +169,6 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
                 save_path = '%s_%s.png' % (image_path, label)
                 util.save_image(image_numpy, save_path)
 
-    # save images and gt pairs for FGNET
-    def save_image_gt_pairs(self, webpage, visuals, image_path, gt_visuals, gt_path, gt_classes):
-        image_dir = webpage.get_image_dir()
-        batchSize = len(image_path)
-
-        orig_labels = [key for key in gt_visuals.keys()]
-        for i in range(batchSize):
-            short_path = os.path.basename(image_path[i])
-            name = os.path.splitext(short_path)[0]
-            print("saving results for: " + name)
-
-            for label, image_numpy in visuals[i].items():
-                if 'orig' in label:
-                    label_name = label[:-5] + orig_labels[i]
-                    orig_label = label_name
-                    orig_img = image_numpy
-                    orig_image_name = '%s_%s.png' % (name, label_name)
-                else:
-                    label_name = label
-
-                # save image
-                image_name = '%s_%s.png' % (name, label_name)
-                save_path = os.path.join(image_dir, image_name)
-                util.save_image(image_numpy, save_path)
-
-                #find corresponding gt images
-                if 'orig' not in label:
-                    ref_gt_idx = [idx for idx, age_class in enumerate(gt_classes.squeeze(0).tolist()) if age_class == int(label[-1])]
-
-                    if len(ref_gt_idx) == 0:
-                        ims = []
-                        txts = []
-                        links = []
-                        ims += [orig_image_name, image_name]
-                        txts += [orig_label, label_name]
-                        links += [orig_image_name, image_name]
-                        webpage.add_header(name)
-                        webpage.add_images(ims, txts, links, width=self.win_size, cols=2)
-                    else:
-                        webpage.add_header(name)
-                        for gt_idx in ref_gt_idx:
-                            ims = []
-                            txts = []
-                            links = []
-                            gt_name = os.path.splitext(gt_path)[0]
-                            key_name = [key for key in visuals[gt_idx].keys() if 'orig' in key]
-                            gt_image = visuals[gt_idx][key_name[0]]#gt_visuals[orig_labels[gt_idx]]
-                            gt_label = orig_labels[gt_idx]
-                            gt_image_name = '%s_%s.png' % (gt_name, gt_label)
-                            save_path = os.path.join(image_dir, gt_image_name)
-                            util.save_image(gt_image, save_path)
-
-                            ims += [orig_image_name, image_name, gt_image_name]
-                            txts += [orig_label, label_name, gt_label]
-                            links += [orig_image_name, image_name, gt_image_name]
-
-                            webpage.add_images(ims, txts, links, width=self.win_size, cols=3)
-
 
     # save image to the disk
     def save_images(self, webpage, visuals, image_path, gt_visuals=None, gt_path=None):

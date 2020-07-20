@@ -25,34 +25,43 @@ class MulticlassUnalignedDataset(BaseDataset):
         self.get_samples = False
         if not self.opt.isTrain:
             self.in_the_wild = opt.in_the_wild
+        else:
+            self.in_the_wild = False
 
         # find all existing classes in root
-        self.tempClassNames = []
-        subDirs = next(os.walk(self.root))[1]  # a quick way to get all subdirectories
-        for currDir in subDirs:
-            if self.opt.isTrain:
-                prefix = 'train'
-            else:
-                prefix = 'test'
-            if prefix in currDir:  # we assume that the class name starts with the prefix
-                len_prefix = len(prefix)
-                className = currDir[len_prefix:]
-                self.tempClassNames += [className]
+        if not self.in_the_wild:
+            self.tempClassNames = []
+            subDirs = next(os.walk(self.root))[1]  # a quick way to get all subdirectories
+            for currDir in subDirs:
+                if self.opt.isTrain:
+                    prefix = 'train'
+                else:
+                    prefix = 'test'
+                if prefix in currDir:  # we assume that the class name starts with the prefix
+                    len_prefix = len(prefix)
+                    className = currDir[len_prefix:]
+                    self.tempClassNames += [className]
 
-        # sort classes
-        if len(self.opt.sort_order) > 0:
+            # sort classes
+            if len(self.opt.sort_order) > 0:
+                self.classNames = []
+                for i, nextClass in enumerate(self.opt.sort_order):
+                    for currClass in self.tempClassNames:
+                        if nextClass == currClass:
+                            self.classNames += [currClass]
+                            curr_class_num = self.assign_tex_class(currClass)
+                            self.name_mapping[currClass] = curr_class_num
+            else:
+                self.classNames = sorted(self.tempClassNames)
+                for i, currClass in enumerate(self.classNames):
+                    curr_class_num = self.assign_tex_class(currClass)
+                    self.name_mapping[currClass] = curr_class_num
+        else:
             self.classNames = []
             for i, nextClass in enumerate(self.opt.sort_order):
-                for currClass in self.tempClassNames:
-                    if nextClass == currClass:
-                        self.classNames += [currClass]
-                        curr_class_num = self.assign_tex_class(currClass)
-                        self.name_mapping[currClass] = curr_class_num
-        else:
-            self.classNames = sorted(self.tempClassNames)
-            for i, currClass in enumerate(self.classNames):
-                curr_class_num = self.assign_tex_class(currClass)
-                self.name_mapping[currClass] = curr_class_num
+                self.classNames += [nextClass]
+                curr_class_num = self.assign_tex_class(nextClass)
+                self.name_mapping[nextClass] = curr_class_num
 
         self.active_classes_mapping = {}
 
@@ -70,17 +79,18 @@ class MulticlassUnalignedDataset(BaseDataset):
             self.img_counter = 0
 
         # arrange directories
-        self.dirs = []
-        self.img_paths = []
-        self.parsing_paths = []
-        self.sizes = []
+        if not self.in_the_wild:
+            self.dirs = []
+            self.img_paths = []
+            self.parsing_paths = []
+            self.sizes = []
 
-        for currClass in self.classNames:
-            self.dirs += [os.path.join(opt.dataroot, opt.phase + currClass)]
-            imgs, parsings = list_folder_images(self.dirs[-1], self.opt)
-            self.img_paths += [imgs]
-            self.parsing_paths += [parsings]
-            self.sizes += [len(self.img_paths[-1])]
+            for currClass in self.classNames:
+                self.dirs += [os.path.join(opt.dataroot, opt.phase + currClass)]
+                imgs, parsings = list_folder_images(self.dirs[-1], self.opt)
+                self.img_paths += [imgs]
+                self.parsing_paths += [parsings]
+                self.sizes += [len(self.img_paths[-1])]
 
         opt.dataset_size = self.__len__()
 
@@ -116,7 +126,7 @@ class MulticlassUnalignedDataset(BaseDataset):
         img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 3)
 
         if self.in_the_wild:
-            parsing = self.preprocessor.forward(img)
+            img, parsing = self.preprocessor.forward(img)
         else:
             parsing_path = os.path.join(path_dir, 'parsings', im_name[:-4] + '.png')
             parsing = Image.open(parsing_path).convert('RGB')
@@ -207,6 +217,8 @@ class MulticlassUnalignedDataset(BaseDataset):
     def __len__(self):
         if self.opt.isTrain:
             return round(sum(self.sizes) / 2)  # this determines how many iterations we make per epoch
+        elif self.in_the_wild:
+            return 0
         else:
             return max(self.sizes) * self.numClasses
 
