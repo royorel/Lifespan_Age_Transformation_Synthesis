@@ -13,8 +13,8 @@ from PIL import Image
 from pdb import set_trace as st
 
 
-males_file_spec = dict(file_url='https://drive.google.com/uc?id=1MsXN54hPi9PWDmn1HKdmKfv-J5hWYFVZ', file_path='checkpoints/', file_size=213175683, file_md5='0079186147ec816176b946a073d1f396')
-females_file_spec = dict(file_url='https://drive.google.com/uc?id=1LNm0zAuiY0CIJnI0lHTq1Ttcu9_M1NAJ', file_path='checkpoints/', file_size=213218113, file_md5='0675f809413c026170cf1f22b27f3c5d')
+males_model_spec = dict(file_url='https://drive.google.com/uc?id=1MsXN54hPi9PWDmn1HKdmKfv-J5hWYFVZ', file_path='checkpoints/', file_size=213175683, file_md5='0079186147ec816176b946a073d1f396')
+females_model_spec = dict(file_url='https://drive.google.com/uc?id=1LNm0zAuiY0CIJnI0lHTq1Ttcu9_M1NAJ', file_path='checkpoints/', file_size=213218113, file_md5='0675f809413c026170cf1f22b27f3c5d')
 
 
 # Converts a Tensor into a Numpy array
