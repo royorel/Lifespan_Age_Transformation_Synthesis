@@ -9,16 +9,16 @@
 <sup>1</sup>University of Washington, <sup>2</sup>Stanford University, <sup>3</sup>Adobe Research
 
 <div align="center">
-<img src=./gifs/001_input.gif width="200">
-<img src=./gifs/69005.gif width="200">
-<img src=./gifs/69131.gif width="200">
-<img src=./gifs/69508.gif width="200">
-<img src=./gifs/69587.gif width="200"><br>
-<img src=./gifs/010_input.gif width="200">
-<img src=./gifs/69036.gif width="200">
-<img src=./gifs/69338.gif width="200">
-<img src=./gifs/69577.gif width="200">
-<img src=./gifs/69859.gif width="200">
+<img src=./gifs/001_input.gif width="150">
+<img src=./gifs/69005.gif width="150">
+<img src=./gifs/69131.gif width="150">
+<img src=./gifs/69508.gif width="150">
+<img src=./gifs/69587.gif width="150"><br>
+<img src=./gifs/010_input.gif width="150">
+<img src=./gifs/69036.gif width="150">
+<img src=./gifs/69338.gif width="150">
+<img src=./gifs/69577.gif width="150">
+<img src=./gifs/69859.gif width="150">
 </div>
 
 ## Overview
