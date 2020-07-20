@@ -2,7 +2,6 @@
 ### Licensed under the CC BY-NC-SA 4.0 license (https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
 import torch.utils.data
 from data.multiclass_unaligned_dataset import MulticlassUnalignedDataset
-from data.fgnet_dataset import FGNET_Dataset
 from pdb import set_trace as st
 
 class AgingDataLoader():
@@ -27,10 +26,7 @@ class AgingDataLoader():
 
 
 def CreateDataset(opt):
-    if (not opt.isTrain) and opt.fgnet:
-        dataset = FGNET_Dataset()
-    else:
-        dataset = MulticlassUnalignedDataset()
+    dataset = MulticlassUnalignedDataset()
     print("dataset [%s] was created" % (dataset.name()))
     dataset.initialize(opt)
     return dataset
