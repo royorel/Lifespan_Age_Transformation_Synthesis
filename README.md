@@ -80,8 +80,9 @@ If you want to try the method on images outside of the provided dataset, please 
 3. Person's head should directly face the camera. Looking sideways/downwards/upwards degrades the results.
 4. The person's face should not be occluded (or partially occluded) by any item.
 5. Both eyes should be open and visible. (eye glasses are ok, no sunglasses)
+6. The image should contain a single face.
 
-All of the above cases were under represented or not represented at all in the training data. Therefore, the network would produce degraded outputs or artifacts for this kind of images.
+The above restrictions are used to prevent inputs that are under represented or not represented at all in the training data. Using input images that do not adhere to these guidelines would cause the network to produce artifacts or degraded outputs.
 
 ## Get Started
 1. To start working with the code you need to download the FFHQ-Aging dataset. Go to the [FFHQ-Aging dataset repo](https://github.com/royorel/FFHQ-Aging-Dataset) and follow the instructions to download the data.
