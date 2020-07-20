@@ -52,7 +52,15 @@ The following python packages should also be installed:
 If any of these packages are not installed on your computer, you can install them using the supplied `requirements.txt` file:<br>
 ```pip install -r requirements.txt```
 
-## Using your own image
+## Quick Demo
+You can try running the method on your own images!!!<br>
+Please refer to [Using your own images](#using-your-own-images) for guidelines on what images are good to use.<br>
+1. Download the pre-trained models. ```python download_models.py```
+2. Create a txt file with the paths to all images you want to try (for example [fe]males_image_list.txt)
+3. Run the model: Run```./run_scripts/test.sh``` (Linux) or ```./run_scripts/test.bat``` (windows)
+4. The outputs can be seen in results/[fe]males_model/test_latest/traversal/
+
+## Using your own images
 If you want to try the method on images outside of the provided dataset, please make sure your images follow these guidelines:
 1. Image was taken from a digital camera (phone cameras are fine). Old images from film cameras would produce low quality results.
 2. Pure RGB images only. No black & white, grayscale, sepia, or filtered images (e.g. Instagram filters).
@@ -61,10 +69,6 @@ If you want to try the method on images outside of the provided dataset, please 
 5. Both eyes should be open and visible. (eye glasses are ok, no sunglasses)
 
 All of the above cases were under represented or not represented at all in the training data. Therefore, the network would produce degraded outputs or artifacts for this kind of images.
-
-## Quick Demo (Coming soon)
-You can try running the method on your own image...<br>
-```Coming soon```
 
 ## Get Started
 1. To start working with the code you need to download the FFHQ-Aging dataset. Go to the [FFHQ-Aging dataset repo](https://github.com/royorel/FFHQ-Aging-Dataset) and follow the instructions to download the data.

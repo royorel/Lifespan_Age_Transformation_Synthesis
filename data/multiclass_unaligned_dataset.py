@@ -112,17 +112,13 @@ class MulticlassUnalignedDataset(BaseDataset):
 
     def get_item_from_path(self, path):
         path_dir, im_name = os.path.split(path)
-        try:
-            img = Image.open(path + '.jpg').convert('RGB')
-        except:
-            img = Image.open(path + '.png').convert('RGB')
-
+        img = Image.open(path).convert('RGB')
         img = np.array(img.getdata(), dtype=np.uint8).reshape(img.size[1], img.size[0], 3)
 
         if self.in_the_wild:
             parsing = self.preprocessor.forward(img)
         else:
-            parsing_path = os.path.join(path_dir, 'parsings', im_name + '.png')
+            parsing_path = os.path.join(path_dir, 'parsings', im_name[:-4] + '.png')
             parsing = Image.open(parsing_path).convert('RGB')
             parsing = np.array(parsing.getdata(), dtype=np.uint8).reshape(parsing.size[1], parsing.size[0], 3)
 
