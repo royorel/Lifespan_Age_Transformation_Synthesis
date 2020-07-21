@@ -69,9 +69,9 @@ If any of these packages are not installed on your computer, you can install the
 You can try running the method on your own images!!!<br>
 Please refer to [Using your own images](#using-your-own-images) for guidelines on what images are good to use.<br>
 1. Download the pre-trained models. ```python download_models.py```
-2. Create a txt file with the paths to all images you want to try (for example [fe]males_image_list.txt)
-3. Run the model: Run```./run_scripts/test.sh``` (Linux) or ```./run_scripts/test.bat``` (windows)
-4. The outputs can be seen in results/[fe]males_model/test_latest/traversal/
+2. Create a txt file with the paths to all images you want to try (for example, see males_image_list.txt or females_image_list.txt)
+3. Run the model: Open, ```./run_scripts/in_the_wild.sh``` (Linux) or ```./run_scripts/in_the_wild.bat``` (windows), select which model to use in the ```--name``` flag (```males_model``` or ```females_model```), and run the script.
+4. The outputs can be seen in ```results/males_model/test_latest/traversal/``` or ```results/females_model/test_latest/traversal/``` (according to the selected model).
 
 ## Using your own images
 If you want to try the method on images outside of the provided dataset, please make sure your images follow these guidelines:
@@ -135,6 +135,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 4. The output images will be saved to results/\<model name>/test_\<model_checkpoint>/deploy/
 
 ## Citation
+If you use this code for your research, please cite our paper.
 ```
 @inproceedings{orel2020lifespan,
   title={Lifespan Age Transformation Synthesis},
@@ -147,3 +148,6 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
   year={2020}
 }
 ```
+
+## Acknowledgments
+This code is inspired by [pix2pix-HD](https://github.com/NVIDIA/pix2pixHD)
