@@ -71,10 +71,10 @@ Please refer to [Using your own images](#using-your-own-images) for guidelines o
 1. Download the pre-trained models. ```python download_models.py```
 2. Create a txt file with the paths to all images you want to try (for example, see males_image_list.txt or females_image_list.txt)
 3. Run the model:
-  - Open, ```./run_scripts/in_the_wild.sh``` (Linux) or ```./run_scripts/in_the_wild.bat``` (windows).
-  - Select which model to use in the ```--name``` flag (```males_model``` or ```females_model```).
-  - Enter the path to the txt file you created in section 2 after the ```--image_path_file``` flag.
-  - Run the script.
+   - Open, ```./run_scripts/in_the_wild.sh``` (Linux) or ```./run_scripts/in_the_wild.bat``` (windows).
+   - Select which model to use in the ```--name``` flag (```males_model``` or ```females_model```).
+   - Enter the path to the txt file you created in section 2 after the ```--image_path_file``` flag.
+   - Run the script.
 4. The outputs can be seen in ```results/males_model/test_latest/traversal/``` or ```results/females_model/test_latest/traversal/``` (according to the selected model).
 
 If you get a CUDA out of memory error, slightly increase the ```--interp_step``` parameter until it fits your GPU. This parameter controls the number of interpolated frames between every 2 anchor classes. Increasing it will reduce the length of the output video.
