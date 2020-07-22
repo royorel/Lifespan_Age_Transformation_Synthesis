@@ -117,7 +117,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
    - The model name ```--name```
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
 2. Test the model: Run```./run_scripts/test.sh``` (Linux) or ```./run_scripts/test.bat``` (windows)
-3. The outputs can be seen in ```results/\<model name>/test_<model_checkpoint>/index.html```
+3. The outputs can be seen in ```results/<model name>/test_<model_checkpoint>/index.html```
 
 ### Generate Video
 1. Prepare a ```.txt``` file with a list of image paths to generate videos for. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
@@ -127,7 +127,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/traversal.sh``` (Linux) or ```./run_scripts/traversal.bat``` (windows)
-4. The output videos will be saved to ```results/\<model name>/test_<model_checkpoint>/traversal/```
+4. The output videos will be saved to ```results/<model name>/test_<model_checkpoint>/traversal/```
 
 ### Generate Full Progression
 This will generate an image of progressions to all anchor classes
@@ -138,7 +138,7 @@ This will generate an image of progressions to all anchor classes
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
-4. The output images will be saved to ```results/\<model name>/test_<model_checkpoint>/deploy/```
+4. The output images will be saved to ```results/<model name>/test_<model_checkpoint>/deploy/```
 
 ## Citation
 If you use this code for your research, please cite our paper.
