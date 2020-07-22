@@ -22,7 +22,7 @@
 </div>
 
 ## Overview
-Lifespan Age Transformation Synthesis is a GAN based method designed to simulate the countinuous aging process from a single input image.<br>
+Lifespan Age Transformation Synthesis is a GAN based method designed to simulate the continuous aging process from a single input image.<br>
 This code is the official PyTorch implementation of the paper:
 > **Lifespan Age Transformation Synthesis**<br>
 > Roy Or-El, Soumyadip Sengupta, Ohad Fried, Eli Shechtman, Ira Kemelmacher-Shlizerman<br>
@@ -31,7 +31,7 @@ This code is the official PyTorch implementation of the paper:
 
 ## Ethics & Bias statement
 ### Intended use:
- - This algorithm is designed to hallucinate the aging process and produce an **approximation** of a person's appearance throughout his/her/their lifespan. throughout his/her/their lifespan.
+ - This algorithm is designed to hallucinate the aging process and produce an **approximation** of a person's appearance throughout his/her/their lifespan. 
  - The main use cases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method, results might be inaccurate and biased. The output of our method should be critically analyzed by a trained professional, and not be treated as an absolute ground truth.
  - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other form of legal evidence under any circumstances._**
 
@@ -69,29 +69,28 @@ If any of these packages are not installed on your computer, you can install the
 You can try running the method on your own images!!!<br>
 Please refer to [Using your own images](#using-your-own-images) for guidelines on what images are good to use.<br>
 1. Download the pre-trained models. ```python download_models.py```
-2. Create a txt file with the paths to all images you want to try (for example, see males_image_list.txt or females_image_list.txt)
+2. Create a txt file with the paths to all images you want to try (for example, see ```males_image_list.txt``` or ```females_image_list.txt```)
 3. Run the model:
    - Open, ```./run_scripts/in_the_wild.sh``` (Linux) or ```./run_scripts/in_the_wild.bat``` (windows).
    - Select which model to use in the ```--name``` flag (```males_model``` or ```females_model```).
-   - Enter the path to the txt file you created in section 2 after the ```--image_path_file``` flag.
+   - Enter the path to the txt file you created in step 2 after the ```--image_path_file``` flag.
    - Run the script.
 4. The outputs can be seen in ```results/males_model/test_latest/traversal/``` or ```results/females_model/test_latest/traversal/``` (according to the selected model).
 
 If you get a CUDA out of memory error, slightly increase the ```--interp_step``` parameter until it fits your GPU. This parameter controls the number of interpolated frames between every 2 anchor classes. Increasing it will reduce the length of the output video.
 
 ## Using your own images
-If you want to try the method on images outside of the provided dataset, please make sure your images follow these guidelines:
-1. Image was taken from a digital camera (phone cameras are fine). Old images from film cameras would produce low quality results.
-2. Pure RGB images only. No black & white, grayscale, sepia, or filtered images (e.g. Instagram filters).
-3. Person's head should directly face the camera. Looking sideways/downwards/upwards degrades the results.
-4. The person's face should not be occluded (or partially occluded) by any item.
-5. Both eyes should be open and visible. (eye glasses are ok, no sunglasses)
-6. The image should contain a single face.
+For best results, use images according to the following guidelines:
+1. The image should contain a single face.
+2. Image was taken from a digital camera (phone cameras are fine). Old images from film cameras would produce low quality results.
+3. Pure RGB images only. No black & white, grayscale, sepia, or filtered images (e.g. Instagram filters).
+4. Person's head should directly face the camera. Looking sideways/downwards/upwards degrades the results.
+5. The person's face should not be occluded (or partially occluded) by any item.
+6. Both eyes should be open and visible. (eyeglasses are ok, no sunglasses)
 
-The above restrictions are used to prevent inputs that are under represented or not represented at all in the training data. Using input images that do not adhere to these guidelines would cause the network to produce artifacts or degraded outputs.
 
-## Get Started
-1. To start working with the code you need to download the FFHQ-Aging dataset. Go to the [FFHQ-Aging dataset repo](https://github.com/royorel/FFHQ-Aging-Dataset) and follow the instructions to download the data.
+## Training/Testing on FFHQ-Aging
+1. Download the FFHQ-Aging dataset. Go to the [FFHQ-Aging dataset repo](https://github.com/royorel/FFHQ-Aging-Dataset) and follow the instructions to download the data.
 
 2. Prune & organize the raw FFHQ-Aging dataset into age classes:
 ```
@@ -118,27 +117,28 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
    - The model name ```--name```
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
 2. Test the model: Run```./run_scripts/test.sh``` (Linux) or ```./run_scripts/test.bat``` (windows)
-3. The outputs can be seen in results/\<model name>/test_\<model_checkpoint>/index.html
+3. The outputs can be seen in ```results/\<model name>/test_<model_checkpoint>/index.html```
 
 ### Generate Video
-1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
+1. Prepare a ```.txt``` file with a list of image paths to generate videos for. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
 2. Open ```run_scripts/traversal.sh``` (Linux) or ```run_scripts/traversal.bat``` (windows) and set:
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/traversal.sh``` (Linux) or ```./run_scripts/traversal.bat``` (windows)
-4. The output videos will be saved to results/\<model name>/test_\<model_checkpoint>/traversal/
+4. The output videos will be saved to ```results/\<model name>/test_<model_checkpoint>/traversal/```
 
-### Generate anchor age classes images
-1. Prepare a ```.txt``` file with a list of image paths to generate videos for, omit the file extentions. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
+### Generate Full Progression
+This will generate an image of progressions to all anchor classes
+1. Prepare a ```.txt``` file with a list of image paths to generate videos for. See examples in ```males_image_list.txt``` and ```females_image_list.txt```
 2. Open ```run_scripts/deploy.sh``` (Linux) or ```run_scripts/deploy.bat``` (windows) and set:
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
    - Which checkpoint to load the model from ```--which_epoch```. This can be either an epoch number e.g. ```400``` or the latest saved model ```latest```.
    - The relative path to the image list ```--image_path_file```
 3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
-4. The output images will be saved to results/\<model name>/test_\<model_checkpoint>/deploy/
+4. The output images will be saved to ```results/\<model name>/test_<model_checkpoint>/deploy/```
 
 ## Citation
 If you use this code for your research, please cite our paper.
