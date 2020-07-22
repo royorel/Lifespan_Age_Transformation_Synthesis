@@ -11,7 +11,7 @@ from util.preprocess_itw_im import preprocessInTheWildImage
 from PIL import Image
 from pdb import set_trace as st
 
-TEX_CLASSES_UPPER_BOUNDS = [2, 6, 9, 14, 19, 29, 39, 49, 69, 120]
+CLASSES_UPPER_BOUNDS = [2, 6, 9, 14, 19, 29, 39, 49, 69, 120]
 
 class MulticlassUnalignedDataset(BaseDataset):
     def initialize(self, opt):
@@ -49,18 +49,18 @@ class MulticlassUnalignedDataset(BaseDataset):
                     for currClass in self.tempClassNames:
                         if nextClass == currClass:
                             self.classNames += [currClass]
-                            curr_class_num = self.assign_tex_class(currClass)
+                            curr_class_num = self.assign_age_class(currClass)
                             self.name_mapping[currClass] = curr_class_num
             else:
                 self.classNames = sorted(self.tempClassNames)
                 for i, currClass in enumerate(self.classNames):
-                    curr_class_num = self.assign_tex_class(currClass)
+                    curr_class_num = self.assign_age_class(currClass)
                     self.name_mapping[currClass] = curr_class_num
         else:
             self.classNames = []
             for i, nextClass in enumerate(self.opt.sort_order):
                 self.classNames += [nextClass]
-                curr_class_num = self.assign_tex_class(nextClass)
+                curr_class_num = self.assign_age_class(nextClass)
                 self.name_mapping[nextClass] = curr_class_num
 
         self.active_classes_mapping = {}
@@ -86,7 +86,7 @@ class MulticlassUnalignedDataset(BaseDataset):
             self.sizes = []
 
             for currClass in self.classNames:
-                self.dirs += [os.path.join(opt.dataroot, opt.phase + currClass)]
+                self.dirs += [os.path.join(self.root, opt.phase + currClass)]
                 imgs, parsings = list_folder_images(self.dirs[-1], self.opt)
                 self.img_paths += [imgs]
                 self.parsing_paths += [parsings]
@@ -104,11 +104,11 @@ class MulticlassUnalignedDataset(BaseDataset):
         self.class_counter = 0
         self.img_counter = 0
 
-    def assign_tex_class(self, class_name):
+    def assign_age_class(self, class_name):
         ages = [int(s) for s in re.split('-|_', class_name) if s.isdigit()]
         max_age = ages[-1]
-        for i in range(len(TEX_CLASSES_UPPER_BOUNDS)):
-            if max_age <= TEX_CLASSES_UPPER_BOUNDS[i]:
+        for i in range(len(CLASSES_UPPER_BOUNDS)):
+            if max_age <= CLASSES_UPPER_BOUNDS[i]:
                 break
 
         return i

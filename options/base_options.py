@@ -24,7 +24,7 @@ class BaseOptions():
         self.parser.add_argument('--output_nc', type=int, default=3, help='# of output image channels')
 
         # for setting inputs
-        self.parser.add_argument('--dataroot', type=str, default='../Combined_Face_Dataset_with_masks_HQ200/males/')
+        self.parser.add_argument('--dataroot', type=str, default='./datasets/males/')
         self.parser.add_argument('--sort_classes', type=bool, default=True, help='a flag that indicates whether to sort the classes')
         self.parser.add_argument('--sort_order', type=str, default='0-2,3-6,7-9,15-19,30-39,50-69', help='a specific order to sort the classes, must contain all classes, only works when sort_classes is true')
         self.parser.add_argument('--resize_or_crop', type=str, default='resize_and_crop', help='scaling and cropping of images at load time [resize_and_crop|crop|scale_width|scale_width_and_crop]')
