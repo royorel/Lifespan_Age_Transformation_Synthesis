@@ -60,7 +60,11 @@ class BaseOptions():
     def parse(self, save=True):
         if not self.initialized:
             self.initialize()
-        self.opt = self.parser.parse_args()
+        try:
+            self.opt = self.parser.parse_args()
+        except: # solves argparse error in google colab
+            self.opt = self.parser.parse_args(args=[])
+
         self.opt.isTrain = self.isTrain   # train or test
 
         str_ids = self.opt.gpu_ids.split(',')
