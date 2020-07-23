@@ -67,7 +67,10 @@ If any of these packages are not installed on your computer, you can install the
 
 ## Quick Demo
 You can try running the method on your own images!!!<br>
-Please refer to [Using your own images](#using-your-own-images) for guidelines on what images are good to use.<br>
+
+You can either run the demo localy or explore it in Colab [![Explore in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/royorel/Lifespan_Age_Transformation_Synthesis/blob/master/LATS_demo.ipynb)<br>
+
+Running locally:
 1. Download the pre-trained models. ```python download_models.py```
 2. Create a txt file with the paths to all images you want to try (for example, see ```males_image_list.txt``` or ```females_image_list.txt```)
 3. Run the model:
@@ -76,6 +79,8 @@ Please refer to [Using your own images](#using-your-own-images) for guidelines o
    - Enter the path to the txt file you created in step 2 after the ```--image_path_file``` flag.
    - Run the script.
 4. The outputs can be seen in ```results/males_model/test_latest/traversal/``` or ```results/females_model/test_latest/traversal/``` (according to the selected model).
+
+Please refer to [Using your own images](#using-your-own-images) for guidelines on what images are good to use.<br>
 
 If you get a CUDA out of memory error, slightly increase the ```--interp_step``` parameter until it fits your GPU. This parameter controls the number of interpolated frames between every 2 anchor classes. Increasing it will reduce the length of the output video.
 
