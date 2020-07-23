@@ -65,6 +65,7 @@ def download_pretrained_models():
         zip_fname.extractall('./checkpoints')
 
     print('Done!')
+    os.remove(males_model_spec['file_path'])
 
     print('Downloading females model')
     with requests.Session() as session:
@@ -75,6 +76,7 @@ def download_pretrained_models():
         zip_fname.extractall('./checkpoints')
 
     print('Done!')
+    os.remove(females_model_spec['file_path'])
 
 def download_file(session, file_spec, chunk_size=128, num_attempts=10):
     file_path = file_spec['file_path']
