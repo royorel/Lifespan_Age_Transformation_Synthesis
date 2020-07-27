@@ -163,4 +163,4 @@ If you use this code for your research, please cite our paper.
 ```
 
 ## Acknowledgments
-This code is inspired by [pix2pix-HD](https://github.com/NVIDIA/pix2pixHD)
+This code is inspired by [pix2pix-HD](https://github.com/NVIDIA/pix2pixHD) and [style-based-gan-pytorch](https://github.com/rosinality/style-based-gan-pytorch).
