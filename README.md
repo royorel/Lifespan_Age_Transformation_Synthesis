@@ -93,7 +93,7 @@ For best results, use images according to the following guidelines:
 3. Pure RGB images only. No black & white, grayscale, sepia, or filtered images (e.g. Instagram filters).
 4. Person's head should directly face the camera. Looking sideways/downwards/upwards degrades the results.
 5. The person's face should not be occluded (or partially occluded) by any item.
-6. Both eyes should be open and visible. (eyeglasses are ok, no sunglasses)
+6. Both eyes should be open and visible. (Eyeglasses are ok, but might produce artifacts. No sunglasses)
 
 
 ## Training/Testing on FFHQ-Aging
