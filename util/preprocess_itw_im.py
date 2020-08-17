@@ -84,6 +84,10 @@ class preprocessInTheWildImage():
         # detect all faces in the image and
         # keep the detection with the largest bounding box
         dets = self.detector(img, 1)
+        if len(dets) == 0:
+            print ('Could not detect any face in the image, please try again with a different image')
+            raise
+
         max_area = 0
         max_idx = -1
         for k, d in enumerate(dets):
