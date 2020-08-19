@@ -33,7 +33,7 @@ This code is the official PyTorch implementation of the paper:
 
 ## Ethics & Bias statement
 ### Intended use:
- - This algorithm is designed to hallucinate the aging process and produce an **approximation** of a person's appearance throughout his/her/their lifespan. 
+ - This algorithm is designed to hallucinate the aging process and produce an **approximation** of a person's appearance throughout his/her/their lifespan.
  - The main use cases of this method are for art and entertainment purposes (CGI effects, Camera filters, etc.). This method might also be useful for more critical applications, e.g. approximating the appearance of missing people. However, we would like to stress that as a non perfect data-driven method, results might be inaccurate and biased. The output of our method should be critically analyzed by a trained professional, and not be treated as an absolute ground truth.
  - **_The results of this method should not be used as grounds for detention/arrest of a person or as any other form of legal evidence under any circumstances._**
 
@@ -63,6 +63,7 @@ The following python packages should also be installed:
 6. pillow
 7. unidecode
 8. requests
+9. tqdm
 
 If any of these packages are not installed on your computer, you can install them using the supplied `requirements.txt` file:<br>
 ```pip install -r requirements.txt```
@@ -111,7 +112,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 ### Training:
 1. Open a visdom port to view loss plots and intermediate results. Run ```visdom``` and monitor results at [http://localhost:8097](http://localhost:8097). If you run the code on a remote server open ```http://hostname:8097``` instead.
 2. Open ```run_scripts/train.sh``` (Linux) or ```run_scripts/train.bat``` (windows) and set:
-   - The GPUs you intend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.<br> 
+   - The GPUs you intend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.<br>
      NOTE: the scripts are currently set to use 4 GPUs
    - The dataset relative path ```--dataroot```
    - The model name ```--name```

@@ -11,10 +11,9 @@ from PIL import Image
 from util.util import download_file
 from pdb import set_trace as st
 
-
-resnet_file_spec = dict(file_url='https://drive.google.com/uc?id=1oRGgrI4KNdefbWVpw0rRkEP1gbJIRokM', file_path='deeplab_model/R-101-GN-WS.pth.tar', file_size=178260167, file_md5='aa48cc3d3ba3b7ac357c1489b169eb32')
-deeplab_file_spec = dict(file_url='https://drive.google.com/uc?id=1w2XjDywFr2NjuUWaLQDRktH7VwIfuNlY', file_path='deeplab_model/deeplab_model.pth', file_size=464446305, file_md5='8e8345b1b9d95e02780f9bed76cc0293')
-predictor_file_spec = dict(file_url='https://drive.google.com/uc?id=1fhq5lvWy-rjrzuHdMoZfLsULvF0gJGwD', file_path='util/shape_predictor_68_face_landmarks.dat', file_size=99693937, file_md5='73fde5e05226548677a050913eed4e04')
+resnet_file_path = 'deeplab_model/R-101-GN-WS.pth.tar'
+deeplab_file_path = 'deeplab_model/deeplab_model.pth'
+predictor_file_path = 'util/shape_predictor_68_face_landmarks.dat'
 model_fname = 'deeplab_model/deeplab_model.pth'
 deeplab_classes = ['background' ,'skin','nose','eye_g','l_eye','r_eye','l_brow','r_brow','l_ear','r_ear','mouth','u_lip','l_lip','hair','hat','ear_r','neck_l','neck','cloth']
 
@@ -25,14 +24,12 @@ class preprocessInTheWildImage():
 
         # load landmark detector models
         self.detector = dlib.get_frontal_face_detector()
-        if not os.path.isfile(predictor_file_spec['file_path']):
-            print('Downloading face landmarks shape predictor')
-            with requests.Session() as session:
-                download_file(session, predictor_file_spec)
+        if not os.path.isfile(predictor_file_path):
+            print('Cannot find landmarks shape predictor model.\n'\
+                  'Please run download_models.py to download the model')
+            raise OSError
 
-            print('Done!')
-
-        self.predictor = dlib.shape_predictor(predictor_file_spec['file_path'])
+        self.predictor = dlib.shape_predictor(predictor_file_path)
 
         # deeplab data properties
         self.deeplab_data_transform = transforms.Compose([
@@ -44,12 +41,10 @@ class preprocessInTheWildImage():
         # load deeplab model
         assert torch.cuda.is_available()
         torch.backends.cudnn.benchmark = True
-        if not os.path.isfile(resnet_file_spec['file_path']):
-            print('Downloading backbone Resnet Model parameters')
-            with requests.Session() as session:
-                download_file(session, resnet_file_spec)
-
-            print('Done!')
+        if not os.path.isfile(resnet_file_path):
+            print('Cannot find DeeplabV3 backbone Resnet model.\n' \
+                  'Please run download_models.py to download the model')
+            raise OSError
 
         self.deeplab_model = getattr(deeplab, 'resnet101')(
         	                       pretrained=True,
@@ -59,12 +54,10 @@ class preprocessInTheWildImage():
         	                       beta=False)
 
         self.deeplab_model.eval()
-        if not os.path.isfile(deeplab_file_spec['file_path']):
-            print('Downloading DeeplabV3 Model parameters')
-            with requests.Session() as session:
-                download_file(session, deeplab_file_spec)
-
-            print('Done!')
+        if not os.path.isfile(deeplab_file_path):
+            print('Cannot find DeeplabV3 model.\n' \
+                  'Please run download_models.py to download the model')
+            raise OSError
 
         checkpoint = torch.load(model_fname)
         state_dict = {k[7:]: v for k, v in checkpoint['state_dict'].items() if 'tracked' not in k}

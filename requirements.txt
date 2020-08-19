@@ -6,3 +6,4 @@ scipy
 pillow
 unidecode
 requests
+tqdm
