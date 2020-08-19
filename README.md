@@ -24,7 +24,7 @@
 </div>
 
 ## Updates
-August 19th, 2020: Added alternate download urls for pretrained models to bypass Google Drive "quota exceeded" error.
+ - August 19th, 2020: Added alternate download urls for pretrained models to bypass Google Drive "quota exceeded" error.
 
 ## Overview
 Lifespan Age Transformation Synthesis is a GAN based method designed to simulate the continuous aging process from a single input image.<br>
