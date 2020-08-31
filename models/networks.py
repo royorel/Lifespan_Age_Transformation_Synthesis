@@ -790,7 +790,7 @@ class StyleGANDiscriminator(nn.Module):
     def minibatch_stdev(self, input):
         out_std = torch.sqrt(input.var(0, unbiased=False) + 1e-8)
         mean_std = out_std.mean()
-        mean_std = mean_std.expand(input.size(0), 1, 4, 4)
+        mean_std = mean_std.expand(input.size(0), 1, input.size(2), input.size(3))
         out = torch.cat((input, mean_std), 1)
         return out
 
