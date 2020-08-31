@@ -23,6 +23,9 @@
 <img src=./gifs/69859.gif width="150">
 </div>
 
+## Updates
+ - August 19th, 2020: Added alternate download urls for pretrained models to bypass Google Drive "quota exceeded" error.
+
 ## Overview
 Lifespan Age Transformation Synthesis is a GAN based method designed to simulate the continuous aging process from a single input image.<br>
 This code is the official PyTorch implementation of the paper:
