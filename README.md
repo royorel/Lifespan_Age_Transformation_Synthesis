@@ -112,7 +112,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
 3. Download pretrained models (Optional)<br>
 ```python download_models.py```
 
-### Training:
+### Training
 1. Open a visdom port to view loss plots and intermediate results. Run ```visdom``` and monitor results at [http://localhost:8097](http://localhost:8097). If you run the code on a remote server open ```http://hostname:8097``` instead.
 2. Open ```run_scripts/train.sh``` (Linux) or ```run_scripts/train.bat``` (windows) and set:
    - The GPUs you intend to use ```--gpu_ids``` as well as the ```CUDA_VISIBLE_DEVICES``` environment variable.<br>
@@ -122,7 +122,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
    - The batch size ```--batchSize``` according to your GPU's maximum RAM capacity and the number of GPU's available.
 3. Train the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
 
-### Testing:
+### Testing
 1. Open ```run_scripts/test.sh``` (Linux) or ```run_scripts/test.bat``` (windows) and set:
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
