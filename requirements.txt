@@ -7,3 +7,4 @@ pillow
 unidecode
 requests
 tqdm
+dlib
