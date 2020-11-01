@@ -67,6 +67,7 @@ The following python packages should also be installed:
 7. unidecode
 8. requests
 9. tqdm
+10. dlib
 
 If any of these packages are not installed on your computer, you can install them using the supplied `requirements.txt` file:<br>
 ```pip install -r requirements.txt```
