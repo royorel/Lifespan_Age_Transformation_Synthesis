@@ -152,6 +152,46 @@ This will generate an image of progressions to all anchor classes
 3. Run ```./run_scripts/deploy.sh``` (Linux) or ```./run_scripts/deploy.bat``` (windows)
 4. The output images will be saved to ```results/<model name>/test_<model_checkpoint>/deploy/```
 
+## Training/Testing on New Datasets
+If you wish to train the model on a new dataset, arange it in the following structure:
+```                                                                                           
+├── dataset_name                                                                                                                                                                                                       
+│   ├── train<class1> 
+|   |   └── image1.png
+|   |   └── image2.png
+|   |   └── ...                                                                                                
+│   │   ├── parsings
+│   │   │   └── image1.png
+│   │   │   └── image2.png
+│   │   │   └── ...                                                                                                                             
+...
+│   ├── train<classN> 
+|   |   └── image1.png
+|   |   └── image2.png
+|   |   └── ...                                                                                                
+│   │   ├── parsings
+│   │   │   └── image1.png
+│   │   │   └── image2.png
+│   │   │   └── ... 
+│   ├── test<class1> 
+|   |   └── image1.png
+|   |   └── image2.png
+|   |   └── ...                                                                                                
+│   │   ├── parsings
+│   │   │   └── image1.png
+│   │   │   └── image2.png
+│   │   │   └── ...                                                                                                                             
+...
+│   ├── test<classN> 
+|   |   └── image1.png
+|   |   └── image2.png
+|   |   └── ...                                                                                                
+│   │   ├── parsings
+│   │   │   └── image1.png
+│   │   │   └── image2.png
+│   │   │   └── ... 
+``` 
+
 ## Citation
 If you use this code for your research, please cite our paper.
 ```
