@@ -121,6 +121,7 @@ python create_dataset.py --folder <path to raw FFHQ-Aging directory> --labels_fi
    - The dataset relative path ```--dataroot```
    - The model name ```--name```
    - The batch size ```--batchSize``` according to your GPU's maximum RAM capacity and the number of GPU's available.
+   - If you wish to continue training from an existing checkpoint, add the ```--continue_training``` flag and specify the checkpoint you wish to continue training from in the ```--which_epoch``` flag, e.g: ```--which_epoch 100``` or ```--which_epoch latest```.
 3. Train the model: Run```./run_scripts/train.sh``` (Linux) or ```./run_scripts/train.bat``` (windows)
 
 ### Testing
