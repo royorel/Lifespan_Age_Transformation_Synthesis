@@ -91,8 +91,8 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
         if (not self.isTrain) or opt.continue_train or opt.load_pretrain:
             pretrained_path = '' if (not self.isTrain) or (self.isTrain and opt.continue_train) else opt.load_pretrain
             if self.isTrain:
-                self.load_network(self.netG, 'G_tex', opt.which_epoch, pretrained_path)
-                self.load_network(self.netD, 'D_tex', opt.which_epoch, pretrained_path)
+                self.load_network(self.netG, 'G', opt.which_epoch, pretrained_path)
+                self.load_network(self.netD, 'D', opt.which_epoch, pretrained_path)
                 if self.use_moving_avg:
                     self.load_network(self.g_running, 'g_running', opt.which_epoch, pretrained_path)
             elif self.use_moving_avg:
