@@ -18,7 +18,7 @@ class TrainOptions(BaseOptions):
         # for training & optimizer
         self.parser.add_argument('--continue_train', action='store_true', help='continue training: load the latest model')
         self.parser.add_argument('--load_pretrain', type=str, default='', help='load the pretrained model from the specified location')
-        self.parser.add_argument('--which_epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
+        self.parser.add_argument('--which_epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model. This flag must be used when the continue_train flag is on')
         self.parser.add_argument('--phase', type=str, default='train', help='train, val, test, etc')
         self.parser.add_argument('--epochs', type=int, default=400, help='# of epochs to train')
         self.parser.add_argument('--decay_gamma', type=float, default=0.5, help='decay the learning rate by this value')
