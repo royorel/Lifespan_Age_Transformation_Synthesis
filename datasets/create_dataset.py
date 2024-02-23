@@ -12,7 +12,7 @@ clusters = ['0-2','3-6','7-9','10-14','15-19',
 
 def processIm(img_filename, phase, csv_row, num):
     img_basename = os.path.basename(img_filename)
-    labels_filename = os.path.join(os.path.dirname(img_filename), 'parsings', img_basename)
+    labels_filename = os.path.join(os.path.dirname(img_filename), img_basename)
 
     age, age_conf = csv_row['age_group'], float(csv_row['age_group_confidence'])
     gender, gender_conf = csv_row['gender'], float(csv_row['gender_confidence'])
@@ -69,14 +69,16 @@ def create_dataset(folder, labels_file, train_split):
         reader = csv.DictReader(f)
         for csv_row in reader:
             num = int(csv_row['image_number'])
+            print(num)
 
             if num < train_split:
                 phase = 'train'
             else:
                 phase = 'test'
 
-            subdir = str(num - (num % 1000)).zfill(5)
-            img_filename = os.path.join(folder,subdir,str(num).zfill(5)+'.png')
+            # subdir = str(num - (num % 1000)).zfill(5)
+            img_filename = os.path.join(folder, str(num).zfill(5) + '.png')
+            print(img_filename)
             if os.path.isfile(img_filename):
                 print('processing {}'.format(img_filename))
                 processIm(img_filename, phase, csv_row, num)
