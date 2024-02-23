@@ -69,7 +69,6 @@ def create_dataset(folder, labels_file, train_split):
         reader = csv.DictReader(f)
         for csv_row in reader:
             num = int(csv_row['image_number'])
-            print(num)
 
             if num < train_split:
                 phase = 'train'
@@ -78,7 +77,6 @@ def create_dataset(folder, labels_file, train_split):
 
             # subdir = str(num - (num % 1000)).zfill(5)
             img_filename = os.path.join(folder, str(num).zfill(5) + '.png')
-            print(img_filename)
             if os.path.isfile(img_filename):
                 print('processing {}'.format(img_filename))
                 processIm(img_filename, phase, csv_row, num)
