@@ -31,18 +31,6 @@ class MulticlassUnalignedDataset(BaseDataset):
         # find all existing classes in root
         if not self.in_the_wild:
             self.tempClassNames = []
-            dataset_path = './datasets/males'
-            if not os.path.exists(dataset_path):
-                os.makedirs(dataset_path)
-                print(f"Created dataset directory at {dataset_path}. Please populate it with the necessary data.")
-            else:
-                print(f"Dataset directory already exists at {dataset_path}.")
-            dataset_path = './datasets/females'
-            if not os.path.exists(dataset_path):
-                os.makedirs(dataset_path)
-                print(f"Created dataset directory at {dataset_path}. Please populate it with the necessary data.")
-            else:
-                print(f"Dataset directory already exists at {dataset_path}.")
             try:
                 subDirs = next(os.walk(self.root))[1]
                 if not subDirs:
