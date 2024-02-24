@@ -12,6 +12,7 @@ import os
 import numpy as np
 import torch
 from pdb import set_trace as st
+from tqdm import tqdm
 
 def train(opt):
     iter_path = os.path.join(opt.checkpoints_dir, opt.name, 'iter.txt')
@@ -71,7 +72,7 @@ def train(opt):
         epoch_start_time = time.time()
         if epoch != start_epoch:
             epoch_iter = 0
-        for i, data in enumerate(dataset, start=epoch_iter):
+        for i, data in enumerate(tqdm(dataset, total=len(dataset)), start=epoch_iter):
             iter_start_time = time.time()
             total_steps += opt.batchSize
             epoch_iter += opt.batchSize
