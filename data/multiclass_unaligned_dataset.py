@@ -31,7 +31,12 @@ class MulticlassUnalignedDataset(BaseDataset):
         # find all existing classes in root
         if not self.in_the_wild:
             self.tempClassNames = []
-            subDirs = next(os.walk(self.root))[1]  # a quick way to get all subdirectories
+            try:
+                subDirs = next(os.walk(self.root))[1]
+                if not subDirs:
+                    raise ValueError(f"No subdirectories found in {self.root}. Please check the dataset path and structure.")
+            except StopIteration:
+                raise ValueError(f"Invalid or empty directory specified: {self.root}. Please check the dataset path.")  # a quick way to get all subdirectories
             for currDir in subDirs:
                 if self.opt.isTrain:
                     prefix = 'train'
