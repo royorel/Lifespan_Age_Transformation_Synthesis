@@ -37,7 +37,7 @@ class BaseOptions():
         # for displays
         self.parser.add_argument('--display_winsize', type=int, default=256,  help='display window size')
         self.parser.add_argument('--display_port', type=int, default=8097, help='visdom port of the web display')
-        self.parser.add_argument('--display_id', type=int, default=1, help='window id of the web display')
+        self.parser.add_argument('--display_id', type=int, default=0, help='window id of the web display')
 
         # for generator
         self.parser.add_argument('--use_modulated_conv', type=bool, default=True, help='if specified, use modulated conv layers in the decoder like in StyleGAN2')
