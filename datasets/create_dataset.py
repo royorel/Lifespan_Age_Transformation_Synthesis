@@ -78,7 +78,7 @@ def create_dataset(folder, labels_file, train_split):
             # subdir = str(num - (num % 1000)).zfill(5)
             img_filename = os.path.join(folder, str(num).zfill(5) + '.png')
             if os.path.isfile(img_filename):
-                print('processing {}'.format(img_filename))
+                # print('processing {}'.format(img_filename))
                 processIm(img_filename, phase, csv_row, num)
             else:
                 print('Image {}.png was not found'.format(str(num).zfill(5)))
