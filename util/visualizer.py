@@ -128,7 +128,7 @@ table td {width: %dpx; height: %dpx; padding: 4px; outline: 4px solid black}
         if epoch != 'latest':
             epoch_txt = 'epoch_' + str(epoch)
         else:
-            epoch_txt = epochs
+            epoch_txt = str(epoch)
 
         image_path = os.path.join(self.img_dir,'sample_batch_{}.png'.format(epoch_txt))
         util.save_image(matrix_img, image_path)
