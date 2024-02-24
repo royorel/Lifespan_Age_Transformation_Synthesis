@@ -229,10 +229,14 @@ class LATS(BaseModel): #Lifetime Age Transformation Synthesis
             nb = self.numValid
 
         #tex condition mapping
-        condG_A_gen = self.Tensor(nb, self.cond_length)
-        condG_B_gen = self.Tensor(nb, self.cond_length)
-        condG_A_orig = self.Tensor(nb, self.cond_length)
-        condG_B_orig = self.Tensor(nb, self.cond_length)
+        condG_A_gen = torch.zeros(nb, self.cond_length, device='cuda')
+        # condG_A_gen = self.Tensor(nb, self.cond_length)
+        condG_B_gen = torch.zeros(nb, self.cond_length, device='cuda')
+        # condG_B_gen = self.Tensor(nb, self.cond_length)
+        condG_A_orig = torch.zeros(nb, self.cond_length, device='cuda')
+        # condG_A_orig = self.Tensor(nb, self.cond_length)
+        condG_B_orig = torch.zeros(nb, self.cond_length, device='cuda')
+        # condG_B_orig = self.Tensor(nb, self.cond_length)
 
         if self.no_cond_noise:
             noise_sigma = 0
