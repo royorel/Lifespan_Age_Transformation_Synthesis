@@ -21,6 +21,7 @@ def train(opt):
         if opt.which_epoch == 'latest':
             try:
                 start_epoch, epoch_iter = np.loadtxt(iter_path , delimiter=',', dtype=int)
+                print(np.loadtxt(iter_path , delimiter=',', dtype=int))
             except:
                 start_epoch, epoch_iter = 1, 0
         else:

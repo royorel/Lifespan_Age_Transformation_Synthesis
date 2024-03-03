@@ -52,6 +52,7 @@ class BaseModel(torch.nn.Module):
 
     # helper loading function that can be used by subclasses
     def load_network(self, network, network_label, epoch_label, save_dir=''):
+        print("Hi 1")
         save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
         if not save_dir:
             save_dir = self.save_dir
@@ -62,6 +63,7 @@ class BaseModel(torch.nn.Module):
                 raise('Generator must exist!')
         else:
             try:
+                print("Hi 2")
                 if isinstance(network,nn.DataParallel):
                     network.module.load_state_dict(torch.load(save_path))
                 else:
